@@ -1,0 +1,50 @@
+Version 3.2 HI-TECH Software Intermediate Code
+[; ;delay.h: 50: extern void DelayMs(unsigned char);
+"11 C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiments and Codes\Midterm Exam - Copy\delay.c
+[v _DelayMs `(v  1 ef1`uc ]
+{
+[; ;delay.c: 10: void DelayMs(unsigned char cnt)
+[; ;delay.c: 11: {
+[e :U _DelayMs ]
+[v _cnt `uc  1 r1 ]
+[f ]
+"19
+[v _i `uc  1 a ]
+[; ;delay.c: 19: unsigned char i;
+[; ;delay.c: 20: do {
+"20
+[e :U 4 ]
+{
+[; ;delay.c: 21: i = 4;
+"21
+[e = _i -> -> 4 `i `uc ]
+[; ;delay.c: 22: do {
+"22
+[e :U 7 ]
+{
+[; ;delay.c: 23: { unsigned char _dcnt; _dcnt = (250)/((12*1000L)/(4*1000L))|1; while(--_dcnt != 0) continue; };
+"23
+{
+[v __dcnt `uc  1 a ]
+[e = __dcnt -> | / -> -> 250 `i `l / * -> -> 12 `i `l -> 1000 `l * -> -> 4 `i `l -> 1000 `l -> -> 1 `i `l `uc ]
+[e $U 8  ]
+[e :U 9 ]
+[e $U 8  ]
+[e :U 8 ]
+[e $ != -> =- __dcnt -> -> 1 `i `uc `i -> 0 `i 9  ]
+[e :U 10 ]
+}
+"24
+}
+[; ;delay.c: 24: } while(--i);
+[e $ != -> =- _i -> -> 1 `i `uc `i -> -> -> 0 `i `uc `i 7  ]
+[e :U 6 ]
+"25
+}
+[; ;delay.c: 25: } while(--cnt);
+[e $ != -> =- _cnt -> -> 1 `i `uc `i -> -> -> 0 `i `uc `i 4  ]
+[e :U 3 ]
+[; ;delay.c: 27: }
+"27
+[e :UE 1 ]
+}

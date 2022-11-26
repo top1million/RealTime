@@ -1,0 +1,6 @@
+to run the codes
+1) compile them (ex: gcc -o run file.c)
+2) run it (Ex: ./run)
+
+
+to see list of all processes, use "ps -ef"

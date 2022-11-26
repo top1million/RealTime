@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <time.h>
+#include <sys/msg.h>
+#include <sys/shm.h>
+#include <stdlib.h>
+
+int main ()
+{
+	int shmID;
+       int *s;
+        shmID = shmget(1000,sizeof(int)*3, 0666 | IPC_CREAT);
+        printf("shmID = %d\n",shmID);
+        if(shmID < 0){
+		printf("error\n");
+        }
+        
+       s= (int *)shmat(shmID, NULL, 0);
+        printf("values:\n %d\n%d\n%d\n",s[0],s[1],s[2]);
+        shmdt(s);
+        // shmctl(shmID , IPC_RMID, NULL);
+        return 0;
+}

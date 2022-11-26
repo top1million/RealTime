@@ -1,0 +1,13 @@
+_initialise_set: CODE, 764 0 93
+_lcd_putch: CODE, 1009 0 38
+_main: CODE, 482 0 177
+_DelayMs: CODE, 1120 0 35
+i1_DelayMs: CODE, 1155 0 33
+_lcd_clear: CODE, 1217 0 16
+_lcd_goto: CODE, 1233 0 12
+_correspondingLetter: CODE, 21 0 461
+_lcd_write: CODE, 1047 0 37
+_DelaySec: CODE, 1084 0 36
+_IntVector: CODE, 659 0 105
+_lcd_init: CODE, 857 0 89
+Total: 1132

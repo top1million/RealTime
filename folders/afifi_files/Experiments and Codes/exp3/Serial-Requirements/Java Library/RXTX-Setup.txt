@@ -1,0 +1,7 @@
+according to your platform type (64 or 32) pick the right folder within TXRX:
+
+- Copy "rxtxSerial.dll" into "C:\Program Files\Java\jdk1.7.0_80\jre\bin"
+- Copy "RXTXComm.jar" into "C:\Program Files\Java\jdk1.7.0_80\jre\lib\ext"
+- Copy "RXTXComm.jar" into "lib" folder within your project directory
+
+*Ignore the warning about driver version mismatch at the run-time

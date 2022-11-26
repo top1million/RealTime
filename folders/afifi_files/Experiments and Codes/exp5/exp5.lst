@@ -1,0 +1,833 @@
+
+
+HI-TECH Software PIC LITE Macro Assembler V9.83 build 10920 
+                                                                                               Mon Apr 11 10:12:25 2022
+
+HI-TECH Software Omniscient Code Generator (Lite mode) build 10920
+     1  0000                     opt subtitle "HI-TECH Software Omniscient Code Generator (Lite mode) build 10920"
+     2                           
+     3                           opt pagewidth 120
+     4                           
+     5                           	opt lm
+     6                           
+     7                           	processor	16F877A
+     8                           clrc	macro
+     9                           	bcf	3,0
+    10  0000                     	endm
+    11                           clrz	macro
+    12                           	bcf	3,2
+    13  0000                     	endm
+    14                           setc	macro
+    15                           	bsf	3,0
+    16  0000                     	endm
+    17                           setz	macro
+    18                           	bsf	3,2
+    19  0000                     	endm
+    20                           skipc	macro
+    21                           	btfss	3,0
+    22  0000                     	endm
+    23                           skipz	macro
+    24                           	btfss	3,2
+    25  0000                     	endm
+    26                           skipnc	macro
+    27                           	btfsc	3,0
+    28  0000                     	endm
+    29                           skipnz	macro
+    30                           	btfsc	3,2
+    31  0000                     	endm
+    32  0000                     indf	equ	0
+    33  0000                     indf0	equ	0
+    34  0002                     pc	equ	2
+    35  0002                     pcl	equ	2
+    36  0003                     status	equ	3
+    37  0004                     fsr	equ	4
+    38  0004                     fsr0	equ	4
+    39  0001                     c	equ	1
+    40  0000                     z	equ	0
+    41  000A                     pclath	equ	10
+    42                           # 3 "C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiments 
+                                 and Codes\exp5\Codes\counter.c"
+    43                           	psect config,class=CONFIG,delta=2 ;#
+    44                           # 3 "C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiments 
+                                 and Codes\exp5\Codes\counter.c"
+    45  2007  FF7A               	dw 0xFFFF & 0xFFFB & 0xFF7F & 0xFFFE & 0xFFFF ;#
+    46                           	FNCALL	_main,_InitMain
+    47                           	FNROOT	_main
+    48                           	FNCALL	intlevel1,_IntVector
+    49                           	global	intlevel1
+    50                           	FNROOT	intlevel1
+    51                           	global	_display_digit
+    52                           psect	idataBANK0,class=CODE,space=0,delta=2
+    53                           global __pidataBANK0
+    54  00CB                     __pidataBANK0:
+    55                           	file	"C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiment
+                                 s and Codes\exp5\Codes\counter.c"
+    56                           	line	5
+    57                           
+    58                           ;initializer for _display_digit
+    59  00CB  343F               	retlw	03Fh
+    60  00CC  3406               	retlw	06h
+    61  00CD  345B               	retlw	05Bh
+    62  00CE  344F               	retlw	04Fh
+    63  00CF  3466               	retlw	066h
+    64  00D0  346D               	retlw	06Dh
+    65  00D1  347D               	retlw	07Dh
+    66  00D2  3407               	retlw	07h
+    67  00D3  347F               	retlw	07Fh
+    68  00D4  346F               	retlw	06Fh
+    69                           	global	_d1
+    70                           	global	_d1Counter
+    71                           	global	_d2
+    72                           	global	_d2Counter
+    73                           	global	_PORTB
+    74  0006                     _PORTB	set	6
+    75                           	global	_PORTD
+    76  0008                     _PORTD	set	8
+    77                           	global	_TMR0
+    78  0001                     _TMR0	set	1
+    79                           	global	_CARRY
+    80  0018                     _CARRY	set	24
+    81                           	global	_GIE
+    82  005F                     _GIE	set	95
+    83                           	global	_T0IE
+    84  005D                     _T0IE	set	93
+    85                           	global	_T0IF
+    86  005A                     _T0IF	set	90
+    87                           	global	_OPTION_REG
+    88  0081                     _OPTION_REG	set	129
+    89                           	global	_TRISB
+    90  0086                     _TRISB	set	134
+    91                           	global	_TRISD
+    92  0088                     _TRISD	set	136
+    93                           	global	_EEADR
+    94  010D                     _EEADR	set	269
+    95                           	global	_EEDATA
+    96  010C                     _EEDATA	set	268
+    97                           	global	_EECON1
+    98  018C                     _EECON1	set	396
+    99                           	global	_EECON2
+   100  018D                     _EECON2	set	397
+   101                           	global	_RD
+   102  0C60                     _RD	set	3168
+   103                           	global	_WR
+   104  0C61                     _WR	set	3169
+   105                           	global	_WREN
+   106  0C62                     _WREN	set	3170
+   107                           	file	"exp5.as"
+   108                           	line	#
+   109                           psect cinit,class=CODE,delta=2
+   110                           global start_initialization
+   111  009E                     start_initialization:
+   112                           
+   113                           psect	bssCOMMON,class=COMMON,space=1
+   114                           global __pbssCOMMON
+   115  0070                     __pbssCOMMON:
+   116  0070                     _d1:
+   117  0070                            ds      2
+   118                           
+   119  0072                     _d1Counter:
+   120  0072                            ds      2
+   121                           
+   122  0074                     _d2:
+   123  0074                            ds      2
+   124                           
+   125  0076                     _d2Counter:
+   126  0076                            ds      2
+   127                           
+   128                           psect	dataBANK0,class=BANK0,space=1
+   129                           global __pdataBANK0
+   130  0020                     __pdataBANK0:
+   131                           	file	"C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiment
+                                 s and Codes\exp5\Codes\counter.c"
+   132  0020                     _display_digit:
+   133  0020                            ds      10
+   134                           
+   135                           ; Clear objects allocated to COMMON
+   136                           psect cinit,class=CODE,delta=2
+   137  009E  01F0               	clrf	((__pbssCOMMON)+0)&07Fh
+   138  009F  01F1               	clrf	((__pbssCOMMON)+1)&07Fh
+   139  00A0  01F2               	clrf	((__pbssCOMMON)+2)&07Fh
+   140  00A1  01F3               	clrf	((__pbssCOMMON)+3)&07Fh
+   141  00A2  01F4               	clrf	((__pbssCOMMON)+4)&07Fh
+   142  00A3  01F5               	clrf	((__pbssCOMMON)+5)&07Fh
+   143  00A4  01F6               	clrf	((__pbssCOMMON)+6)&07Fh
+   144  00A5  01F7               	clrf	((__pbssCOMMON)+7)&07Fh
+   145                           global btemp
+   146                           psect inittext,class=CODE,delta=2
+   147                           global init_fetch,btemp
+   148                           ;	Called with low address in FSR and high address in W
+   149  00B8                     init_fetch:
+   150  00B8  087E               	movf btemp,w
+   151  00B9  008A               	movwf pclath
+   152  00BA  087F               	movf btemp+1,w
+   153  00BB  0082               	movwf pc
+   154                           global init_ram
+   155                           ;Called with:
+   156                           ;	high address of idata address in btemp 
+   157                           ;	low address of idata address in btemp+1 
+   158                           ;	low address of data in FSR
+   159                           ;	high address + 1 of data in btemp-1
+   160  00BC                     init_ram:
+   161  00BC  120A  118A  20B8   	fcall init_fetch
+              120A  118A         
+   162  00C1  0080               	movwf indf,f
+   163  00C2  0A84               	incf fsr,f
+   164  00C3  0804               	movf fsr,w
+   165  00C4  067D               	xorwf btemp-1,w
+   166  00C5  1903               	btfsc status,2
+   167  00C6  3400               	retlw 0
+   168  00C7  0AFF               	incf btemp+1,f
+   169  00C8  1903               	btfsc status,2
+   170  00C9  0AFE               	incf btemp,f
+   171  00CA  28BC               	goto init_ram
+   172                           ; Initialize objects allocated to BANK0
+   173                           psect cinit,class=CODE,delta=2
+   174                           global init_ram, __pidataBANK0
+   175  00A6  1383               	bcf	status, 7	;select IRP bank0
+   176  00A7  302A               	movlw low(__pdataBANK0+10)
+   177  00A8  00FD               	movwf btemp-1,f
+   178  00A9  3000               	movlw high(__pidataBANK0)
+   179  00AA  00FE               	movwf btemp,f
+   180  00AB  30CB               	movlw low(__pidataBANK0)
+   181  00AC  00FF               	movwf btemp+1,f
+   182  00AD  3020               	movlw low(__pdataBANK0)
+   183  00AE  0084               	movwf fsr,f
+   184  00AF  120A  118A  20BC   	fcall init_ram
+              120A  118A         
+   185                           psect cinit,class=CODE,delta=2
+   186                           global end_of_initialization
+   187                           
+   188                           ;End of C runtime variable initialization code
+   189                           
+   190  00B4                     end_of_initialization:
+   191  00B4  0183               clrf status
+   192  00B5  120A  118A  2815   ljmp _main	;jump to C main() function
+   193                           psect	cstackCOMMON,class=COMMON,space=1
+   194                           global __pcstackCOMMON
+   195  0078                     __pcstackCOMMON:
+   196                           	global	?_InitMain
+   197  0078                     ?_InitMain:	; 0 bytes @ 0x0
+   198                           	global	?_main
+   199  0078                     ?_main:	; 0 bytes @ 0x0
+   200                           	global	?_IntVector
+   201  0078                     ?_IntVector:	; 0 bytes @ 0x0
+   202                           	global	??_IntVector
+   203  0078                     ??_IntVector:	; 0 bytes @ 0x0
+   204  0078                     	ds	4
+   205                           psect	cstackBANK0,class=BANK0,space=1
+   206                           global __pcstackBANK0
+   207  0000                     __pcstackBANK0:
+   208                           	global	??_InitMain
+   209  0000                     ??_InitMain:	; 0 bytes @ 0x0
+   210                           	global	??_main
+   211  0000                     ??_main:	; 0 bytes @ 0x0
+   212 ;;Data sizes: Strings 0, constant 0, data 10, bss 8, persistent 0 stack 0
+   213 ;;Auto spaces:   Size  Autos    Used
+   214 ;; COMMON          14      4      12
+   215 ;; BANK0           80      0      10
+   216 ;; BANK1           80      0       0
+   217 ;; BANK3           96      0       0
+   218 ;; BANK2           96      0       0
+   219                           
+   220 ;;
+   221 ;; Pointer list with targets:
+   222                           
+   223                           
+   224                           
+   225 ;;
+   226 ;; Critical Paths under _main in COMMON
+   227 ;;
+   228 ;;   None.
+   229 ;;
+   230 ;; Critical Paths under _IntVector in COMMON
+   231 ;;
+   232 ;;   None.
+   233 ;;
+   234 ;; Critical Paths under _main in BANK0
+   235 ;;
+   236 ;;   None.
+   237 ;;
+   238 ;; Critical Paths under _IntVector in BANK0
+   239 ;;
+   240 ;;   None.
+   241 ;;
+   242 ;; Critical Paths under _main in BANK1
+   243 ;;
+   244 ;;   None.
+   245 ;;
+   246 ;; Critical Paths under _IntVector in BANK1
+   247 ;;
+   248 ;;   None.
+   249 ;;
+   250 ;; Critical Paths under _main in BANK3
+   251 ;;
+   252 ;;   None.
+   253 ;;
+   254 ;; Critical Paths under _IntVector in BANK3
+   255 ;;
+   256 ;;   None.
+   257 ;;
+   258 ;; Critical Paths under _main in BANK2
+   259 ;;
+   260 ;;   None.
+   261 ;;
+   262 ;; Critical Paths under _IntVector in BANK2
+   263 ;;
+   264 ;;   None.
+   265                           
+   266 ;;
+   267 ;;Main: autosize = 0, tempsize = 0, incstack = 0, save=0
+   268 ;;
+   269                           
+   270 ;;
+   271 ;;Call Graph Tables:
+   272 ;;
+   273 ;; ---------------------------------------------------------------------------------
+   274 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
+   275 ;; ---------------------------------------------------------------------------------
+   276 ;; (0) _main                                                 0     0      0       0
+   277 ;;                           _InitMain
+   278 ;; ---------------------------------------------------------------------------------
+   279 ;; (1) _InitMain                                             0     0      0       0
+   280 ;; ---------------------------------------------------------------------------------
+   281 ;; Estimated maximum stack depth 1
+   282 ;; ---------------------------------------------------------------------------------
+   283 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
+   284 ;; ---------------------------------------------------------------------------------
+   285 ;; (2) _IntVector                                            4     4      0       0
+   286 ;;                                              0 COMMON     4     4      0
+   287 ;; ---------------------------------------------------------------------------------
+   288 ;; Estimated maximum stack depth 2
+   289 ;; ---------------------------------------------------------------------------------
+   290                           
+   291 ;; Call Graph Graphs:
+   292                           
+   293 ;; _main (ROOT)
+   294 ;;   _InitMain
+   295 ;;
+   296 ;; _IntVector (ROOT)
+   297 ;;
+   298                           
+   299 ;; Address spaces:
+   300                           
+   301 ;;Name               Size   Autos  Total    Cost      Usage
+   302 ;;BANK3               60      0       0       9        0.0%
+   303 ;;BITBANK3            60      0       0       8        0.0%
+   304 ;;SFR3                 0      0       0       4        0.0%
+   305 ;;BITSFR3              0      0       0       4        0.0%
+   306 ;;BANK2               60      0       0      11        0.0%
+   307 ;;BITBANK2            60      0       0      10        0.0%
+   308 ;;SFR2                 0      0       0       5        0.0%
+   309 ;;BITSFR2              0      0       0       5        0.0%
+   310 ;;SFR1                 0      0       0       2        0.0%
+   311 ;;BITSFR1              0      0       0       2        0.0%
+   312 ;;BANK1               50      0       0       7        0.0%
+   313 ;;BITBANK1            50      0       0       6        0.0%
+   314 ;;CODE                 0      0       0       0        0.0%
+   315 ;;DATA                 0      0      17      12        0.0%
+   316 ;;ABS                  0      0      16       3        0.0%
+   317 ;;NULL                 0      0       0       0        0.0%
+   318 ;;STACK                0      0       1       2        0.0%
+   319 ;;BANK0               50      0       A       5       12.5%
+   320 ;;BITBANK0            50      0       0       4        0.0%
+   321 ;;SFR0                 0      0       0       1        0.0%
+   322 ;;BITSFR0              0      0       0       1        0.0%
+   323 ;;COMMON               E      4       C       1       85.7%
+   324 ;;BITCOMMON            E      0       0       0        0.0%
+   325 ;;EEDATA             100      0       0       0        0.0%
+   326                           
+   327                           	global	_main
+   328                           psect	maintext,global,class=CODE,delta=2
+   329                           global __pmaintext
+   330  0015                     __pmaintext:
+   331                           
+   332 ;; *************** function _main *****************
+   333 ;; Defined at:
+   334 ;;		line 18 in file "C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiments and Codes\exp5\C
+       odes\counter.c"
+   335 ;; Parameters:    Size  Location     Type
+   336 ;;		None
+   337 ;; Auto vars:     Size  Location     Type
+   338 ;;		None
+   339 ;; Return value:  Size  Location     Type
+   340 ;;		None               void
+   341 ;; Registers used:
+   342 ;;		wreg, fsr0l, fsr0h, status,2, status,0, pclath, cstack
+   343 ;; Tracked objects:
+   344 ;;		On entry : 17F/0
+   345 ;;		On exit  : 0/0
+   346 ;;		Unchanged: 0/0
+   347 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   348 ;;      Params:         0       0       0       0       0
+   349 ;;      Locals:         0       0       0       0       0
+   350 ;;      Temps:          0       0       0       0       0
+   351 ;;      Totals:         0       0       0       0       0
+   352 ;;Total ram usage:        0 bytes
+   353 ;; Hardware stack levels required when called:    2
+   354 ;; This function calls:
+   355 ;;		_InitMain
+   356 ;; This function is called by:
+   357 ;;		Startup code after reset
+   358 ;; This function uses a non-reentrant model
+   359 ;;
+   360                           psect	maintext
+   361                           	file	"C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiment
+                                 s and Codes\exp5\Codes\counter.c"
+   362                           	line	18
+   363                           	global	__size_of_main
+   364  0066                     	__size_of_main	equ	__end_of_main-_main
+   365                           	
+   366  0015                     _main:	
+   367                           	opt	stack 6
+   368                           ; Regs used in _main: [wreg-fsr0h+status,2+status,0+pclath+cstack]
+   369                           	line	20
+   370                           	
+   371  0015                     l2696:	
+   372                           ;counter.c: 20: InitMain();
+   373  0015  120A  118A  20D5   	fcall	_InitMain
+              120A  118A         
+   374                           	line	22
+   375                           	
+   376  001A                     l2698:	
+   377                           ;counter.c: 22: GIE=1;
+   378  001A  178B               	bsf	(95/8),(95)&7
+   379                           	line	23
+   380                           	
+   381  001B                     l2700:	
+   382                           ;counter.c: 23: T0IE = 1;
+   383  001B  168B               	bsf	(93/8),(93)&7
+   384                           	line	26
+   385                           	
+   386  001C                     l2702:	
+   387                           ;counter.c: 26: TMR0 =61;
+   388  001C  303D               	movlw	(03Dh)
+   389  001D  1283               	bcf	status, 5	;RP0=0, select bank0
+   390  001E  1303               	bcf	status, 6	;RP1=0, select bank0
+   391  001F  0081               	movwf	(1)	;volatile
+   392                           	line	27
+   393                           	
+   394  0020                     l2704:	
+   395                           ;counter.c: 27: OPTION_REG = 0x47;
+   396  0020  3047               	movlw	(047h)
+   397  0021  1683               	bsf	status, 5	;RP0=1, select bank1
+   398  0022  1303               	bcf	status, 6	;RP1=0, select bank1
+   399  0023  0081               	movwf	(129)^080h	;volatile
+   400                           	line	28
+   401                           	
+   402  0024                     l2706:	
+   403                           ;counter.c: 28: PORTB= display_digit[d1];
+   404  0024  0870               	movf	(_d1),w
+   405  0025  3E20               	addlw	_display_digit&0ffh
+   406  0026  0084               	movwf	fsr0
+   407  0027  1383               	bcf	status, 7	;select IRP bank0
+   408  0028  0800               	movf	indf,w
+   409  0029  1283               	bcf	status, 5	;RP0=0, select bank0
+   410  002A  1303               	bcf	status, 6	;RP1=0, select bank0
+   411  002B  0086               	movwf	(6)	;volatile
+   412                           	line	29
+   413                           	
+   414  002C                     l2708:	
+   415                           ;counter.c: 29: PORTD= display_digit[d2];
+   416  002C  0874               	movf	(_d2),w
+   417  002D  3E20               	addlw	_display_digit&0ffh
+   418  002E  0084               	movwf	fsr0
+   419  002F  0800               	movf	indf,w
+   420  0030  0088               	movwf	(8)	;volatile
+   421  0031  2832               	goto	l2710
+   422                           	line	30
+   423                           ;counter.c: 30: while (1) {
+   424                           	
+   425  0032                     l698:	
+   426                           	line	31
+   427                           	
+   428  0032                     l2710:	
+   429                           ;counter.c: 31: if(d1Counter==20){
+   430  0032  3014               	movlw	014h
+   431  0033  0672               	xorwf	(_d1Counter),w
+   432  0034  0473               	iorwf	(_d1Counter+1),w
+   433  0035  1D03               	skipz
+   434  0036  2838               	goto	u2321
+   435  0037  2839               	goto	u2320
+   436  0038                     u2321:
+   437  0038  2854               	goto	l2720
+   438  0039                     u2320:
+   439                           	line	32
+   440                           	
+   441  0039                     l2712:	
+   442                           ;counter.c: 32: d1++;
+   443  0039  3001               	movlw	low(01h)
+   444  003A  07F0               	addwf	(_d1),f
+   445  003B  1803               	skipnc
+   446  003C  0AF1               	incf	(_d1+1),f
+   447  003D  3000               	movlw	high(01h)
+   448  003E  07F1               	addwf	(_d1+1),f
+   449                           	line	33
+   450                           ;counter.c: 33: if(d1==10) d1=0;
+   451  003F  300A               	movlw	0Ah
+   452  0040  0670               	xorwf	(_d1),w
+   453  0041  0471               	iorwf	(_d1+1),w
+   454  0042  1D03               	skipz
+   455  0043  2845               	goto	u2331
+   456  0044  2846               	goto	u2330
+   457  0045                     u2331:
+   458  0045  2849               	goto	l2716
+   459  0046                     u2330:
+   460                           	
+   461  0046                     l2714:	
+   462  0046  01F0               	clrf	(_d1)
+   463  0047  01F1               	clrf	(_d1+1)
+   464  0048  2849               	goto	l2716
+   465                           	
+   466  0049                     l700:	
+   467                           	line	34
+   468                           	
+   469  0049                     l2716:	
+   470                           ;counter.c: 34: PORTB= display_digit[d1];
+   471  0049  0870               	movf	(_d1),w
+   472  004A  3E20               	addlw	_display_digit&0ffh
+   473  004B  0084               	movwf	fsr0
+   474  004C  1383               	bcf	status, 7	;select IRP bank0
+   475  004D  0800               	movf	indf,w
+   476  004E  1283               	bcf	status, 5	;RP0=0, select bank0
+   477  004F  1303               	bcf	status, 6	;RP1=0, select bank0
+   478  0050  0086               	movwf	(6)	;volatile
+   479                           	line	35
+   480                           	
+   481  0051                     l2718:	
+   482                           ;counter.c: 35: d1Counter=0;
+   483  0051  01F2               	clrf	(_d1Counter)
+   484  0052  01F3               	clrf	(_d1Counter+1)
+   485  0053  2854               	goto	l2720
+   486                           	line	36
+   487                           	
+   488  0054                     l699:	
+   489                           	line	37
+   490                           	
+   491  0054                     l2720:	
+   492                           ;counter.c: 36: }
+   493                           ;counter.c: 37: if(d2Counter==200){
+   494  0054  30C8               	movlw	0C8h
+   495  0055  0676               	xorwf	(_d2Counter),w
+   496  0056  0477               	iorwf	(_d2Counter+1),w
+   497  0057  1D03               	skipz
+   498  0058  285A               	goto	u2341
+   499  0059  285B               	goto	u2340
+   500  005A                     u2341:
+   501  005A  2832               	goto	l2710
+   502  005B                     u2340:
+   503                           	line	38
+   504                           	
+   505  005B                     l2722:	
+   506                           ;counter.c: 38: d2++;
+   507  005B  3001               	movlw	low(01h)
+   508  005C  07F4               	addwf	(_d2),f
+   509  005D  1803               	skipnc
+   510  005E  0AF5               	incf	(_d2+1),f
+   511  005F  3000               	movlw	high(01h)
+   512  0060  07F5               	addwf	(_d2+1),f
+   513                           	line	39
+   514                           ;counter.c: 39: if(d2==10) d2=0;
+   515  0061  300A               	movlw	0Ah
+   516  0062  0674               	xorwf	(_d2),w
+   517  0063  0475               	iorwf	(_d2+1),w
+   518  0064  1D03               	skipz
+   519  0065  2867               	goto	u2351
+   520  0066  2868               	goto	u2350
+   521  0067                     u2351:
+   522  0067  286B               	goto	l2726
+   523  0068                     u2350:
+   524                           	
+   525  0068                     l2724:	
+   526  0068  01F4               	clrf	(_d2)
+   527  0069  01F5               	clrf	(_d2+1)
+   528  006A  286B               	goto	l2726
+   529                           	
+   530  006B                     l702:	
+   531                           	line	40
+   532                           	
+   533  006B                     l2726:	
+   534                           ;counter.c: 40: PORTD= display_digit[d2];
+   535  006B  0874               	movf	(_d2),w
+   536  006C  3E20               	addlw	_display_digit&0ffh
+   537  006D  0084               	movwf	fsr0
+   538  006E  1383               	bcf	status, 7	;select IRP bank0
+   539  006F  0800               	movf	indf,w
+   540  0070  1283               	bcf	status, 5	;RP0=0, select bank0
+   541  0071  1303               	bcf	status, 6	;RP1=0, select bank0
+   542  0072  0088               	movwf	(8)	;volatile
+   543                           	line	41
+   544                           	
+   545  0073                     l2728:	
+   546                           ;counter.c: 41: d2Counter=0;
+   547  0073  01F6               	clrf	(_d2Counter)
+   548  0074  01F7               	clrf	(_d2Counter+1)
+   549  0075  2832               	goto	l2710
+   550                           	line	42
+   551                           	
+   552  0076                     l701:	
+   553  0076  2832               	goto	l2710
+   554                           	line	43
+   555                           	
+   556  0077                     l703:	
+   557                           	line	30
+   558  0077  2832               	goto	l2710
+   559                           	
+   560  0078                     l704:	
+   561                           	line	44
+   562                           	
+   563  0078                     l705:	
+   564                           	global	start
+   565  0078  120A  118A  2812   	ljmp	start
+   566                           	opt stack 0
+   567                           GLOBAL	__end_of_main
+   568  007B                     	__end_of_main:
+   569 ;; =============== function _main ends ============
+   570                           
+   571                           	signat	_main,88
+   572                           	global	_InitMain
+   573                           psect	text141,local,class=CODE,delta=2
+   574                           global __ptext141
+   575  00D5                     __ptext141:
+   576                           
+   577 ;; *************** function _InitMain *****************
+   578 ;; Defined at:
+   579 ;;		line 11 in file "C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiments and Codes\exp5\C
+       odes\counter.c"
+   580 ;; Parameters:    Size  Location     Type
+   581 ;;		None
+   582 ;; Auto vars:     Size  Location     Type
+   583 ;;		None
+   584 ;; Return value:  Size  Location     Type
+   585 ;;		None               void
+   586 ;; Registers used:
+   587 ;;		status,2
+   588 ;; Tracked objects:
+   589 ;;		On entry : 0/0
+   590 ;;		On exit  : 0/0
+   591 ;;		Unchanged: 0/0
+   592 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   593 ;;      Params:         0       0       0       0       0
+   594 ;;      Locals:         0       0       0       0       0
+   595 ;;      Temps:          0       0       0       0       0
+   596 ;;      Totals:         0       0       0       0       0
+   597 ;;Total ram usage:        0 bytes
+   598 ;; Hardware stack levels used:    1
+   599 ;; Hardware stack levels required when called:    1
+   600 ;; This function calls:
+   601 ;;		Nothing
+   602 ;; This function is called by:
+   603 ;;		_main
+   604 ;; This function uses a non-reentrant model
+   605 ;;
+   606                           psect	text141
+   607                           	file	"C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiment
+                                 s and Codes\exp5\Codes\counter.c"
+   608                           	line	11
+   609                           	global	__size_of_InitMain
+   610  0009                     	__size_of_InitMain	equ	__end_of_InitMain-_InitMain
+   611                           	
+   612  00D5                     _InitMain:	
+   613                           	opt	stack 6
+   614                           ; Regs used in _InitMain: [status,2]
+   615                           	line	12
+   616                           	
+   617  00D5                     l2694:	
+   618                           ;counter.c: 12: PORTB = 0;
+   619  00D5  1283               	bcf	status, 5	;RP0=0, select bank0
+   620  00D6  1303               	bcf	status, 6	;RP1=0, select bank0
+   621  00D7  0186               	clrf	(6)	;volatile
+   622                           	line	13
+   623                           ;counter.c: 13: PORTD = 0;
+   624  00D8  0188               	clrf	(8)	;volatile
+   625                           	line	14
+   626                           ;counter.c: 14: TRISB = 0;
+   627  00D9  1683               	bsf	status, 5	;RP0=1, select bank1
+   628  00DA  1303               	bcf	status, 6	;RP1=0, select bank1
+   629  00DB  0186               	clrf	(134)^080h	;volatile
+   630                           	line	15
+   631                           ;counter.c: 15: TRISD= 0;
+   632  00DC  0188               	clrf	(136)^080h	;volatile
+   633                           	line	16
+   634                           	
+   635  00DD                     l695:	
+   636  00DD  0008               	return
+   637                           	opt stack 0
+   638                           GLOBAL	__end_of_InitMain
+   639  00DE                     	__end_of_InitMain:
+   640 ;; =============== function _InitMain ends ============
+   641                           
+   642                           	signat	_InitMain,88
+   643                           	global	_IntVector
+   644                           psect	text142,local,class=CODE,delta=2
+   645                           global __ptext142
+   646  007B                     __ptext142:
+   647                           
+   648 ;; *************** function _IntVector *****************
+   649 ;; Defined at:
+   650 ;;		line 46 in file "C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiments and Codes\exp5\C
+       odes\counter.c"
+   651 ;; Parameters:    Size  Location     Type
+   652 ;;		None
+   653 ;; Auto vars:     Size  Location     Type
+   654 ;;		None
+   655 ;; Return value:  Size  Location     Type
+   656 ;;		None               void
+   657 ;; Registers used:
+   658 ;;		wreg
+   659 ;; Tracked objects:
+   660 ;;		On entry : 0/0
+   661 ;;		On exit  : 0/0
+   662 ;;		Unchanged: 0/0
+   663 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   664 ;;      Params:         0       0       0       0       0
+   665 ;;      Locals:         0       0       0       0       0
+   666 ;;      Temps:          4       0       0       0       0
+   667 ;;      Totals:         4       0       0       0       0
+   668 ;;Total ram usage:        4 bytes
+   669 ;; Hardware stack levels used:    1
+   670 ;; This function calls:
+   671 ;;		Nothing
+   672 ;; This function is called by:
+   673 ;;		Interrupt level 1
+   674 ;; This function uses a non-reentrant model
+   675 ;;
+   676                           psect	text142
+   677                           	file	"C:\Users\abdal\Desktop\University\Year 4\Second Semester\Real Time Lab\Experiment
+                                 s and Codes\exp5\Codes\counter.c"
+   678                           	line	46
+   679                           	global	__size_of_IntVector
+   680  0023                     	__size_of_IntVector	equ	__end_of_IntVector-_IntVector
+   681                           	
+   682  007B                     _IntVector:	
+   683                           	opt	stack 6
+   684                           ; Regs used in _IntVector: [wreg]
+   685                           psect	intentry,class=CODE,delta=2
+   686                           global __pintentry
+   687  0004                     __pintentry:
+   688                           global interrupt_function
+   689  0004                     interrupt_function:
+   690                           	global saved_w
+   691  007E                     	saved_w	set	btemp+0
+   692  0004  00FE               	movwf	saved_w
+   693  0005  0E03               	swapf	status,w
+   694  0006  00F8               	movwf	(??_IntVector+0)
+   695  0007  0804               	movf	fsr0,w
+   696  0008  00F9               	movwf	(??_IntVector+1)
+   697  0009  080A               	movf	pclath,w
+   698  000A  00FA               	movwf	(??_IntVector+2)
+   699  000B  1283               	bcf	status, 5	;RP0=0, select bank0
+   700  000C  1303               	bcf	status, 6	;RP1=0, select bank0
+   701  000D  087F               	movf	btemp+1,w
+   702  000E  00FB               	movwf	(??_IntVector+3)
+   703  000F  120A  118A  287B   	ljmp	_IntVector
+   704                           psect	text142
+   705                           	line	47
+   706                           	
+   707  007B                     i1l1758:	
+   708                           ;counter.c: 47: if (T0IE && T0IF) {
+   709  007B  1E8B               	btfss	(93/8),(93)&7
+   710  007C  287E               	goto	u1_21
+   711  007D  287F               	goto	u1_20
+   712  007E                     u1_21:
+   713  007E  2893               	goto	i1l709
+   714  007F                     u1_20:
+   715                           	
+   716  007F                     i1l1760:	
+   717  007F  1D0B               	btfss	(90/8),(90)&7
+   718  0080  2882               	goto	u2_21
+   719  0081  2883               	goto	u2_20
+   720  0082                     u2_21:
+   721  0082  2893               	goto	i1l709
+   722  0083                     u2_20:
+   723                           	line	48
+   724                           	
+   725  0083                     i1l1762:	
+   726                           ;counter.c: 48: T0IF = 0;
+   727  0083  110B               	bcf	(90/8),(90)&7
+   728                           	line	49
+   729                           	
+   730  0084                     i1l1764:	
+   731                           ;counter.c: 49: TMR0 =61;
+   732  0084  303D               	movlw	(03Dh)
+   733  0085  0081               	movwf	(1)	;volatile
+   734                           	line	52
+   735                           ;counter.c: 52: d1Counter++;
+   736  0086  3001               	movlw	low(01h)
+   737  0087  07F2               	addwf	(_d1Counter),f
+   738  0088  1803               	skipnc
+   739  0089  0AF3               	incf	(_d1Counter+1),f
+   740  008A  3000               	movlw	high(01h)
+   741  008B  07F3               	addwf	(_d1Counter+1),f
+   742                           	line	53
+   743                           ;counter.c: 53: d2Counter++;
+   744  008C  3001               	movlw	low(01h)
+   745  008D  07F6               	addwf	(_d2Counter),f
+   746  008E  1803               	skipnc
+   747  008F  0AF7               	incf	(_d2Counter+1),f
+   748  0090  3000               	movlw	high(01h)
+   749  0091  07F7               	addwf	(_d2Counter+1),f
+   750  0092  2893               	goto	i1l709
+   751                           	line	54
+   752                           	
+   753  0093                     i1l708:	
+   754                           	line	55
+   755                           	
+   756  0093                     i1l709:	
+   757  0093  087B               	movf	(??_IntVector+3),w
+   758  0094  00FF               	movwf	btemp+1
+   759  0095  087A               	movf	(??_IntVector+2),w
+   760  0096  008A               	movwf	pclath
+   761  0097  0879               	movf	(??_IntVector+1),w
+   762  0098  0084               	movwf	fsr0
+   763  0099  0E78               	swapf	(??_IntVector+0)^0FFFFFF80h,w
+   764  009A  0083               	movwf	status
+   765  009B  0EFE               	swapf	saved_w,f
+   766  009C  0E7E               	swapf	saved_w,w
+   767  009D  0009               	retfie
+   768                           	opt stack 0
+   769                           GLOBAL	__end_of_IntVector
+   770  009E                     	__end_of_IntVector:
+   771 ;; =============== function _IntVector ends ============
+   772                           
+   773                           	signat	_IntVector,88
+   774                           psect	text143,local,class=CODE,delta=2
+   775                           global __ptext143
+   776  0000                     __ptext143:
+   777                           	global	btemp
+   778  007E                     	btemp set 07Eh
+   779                           
+   780                           	DABS	1,126,2	;btemp
+   781                           	global	wtemp0
+   782  007E                     	wtemp0 set btemp
+
+
+HI-TECH Software PICC Macro Assembler V9.83 build 10920 
+Symbol Table                                                                                   Mon Apr 11 10:12:25 2022
+
+                   pc 0002                    _RD 0C60                    _d1 0070                    _d2 0074  
+                  _WR 0C61                    fsr 0004                   l700 0049                   l701 0076  
+                 l702 006B                   l703 0077                   l704 0078                   l705 0078  
+                 l695 00DD                   l698 0032                   l699 0054                   _GIE 005F  
+                 fsr0 0004                   indf 0000                  l2700 001B                  l2710 0032  
+                l2702 001C                  l2712 0039                  l2720 0054                  l2704 0020  
+                l2722 005B                  l2714 0046                  l2706 0024                  l2724 0068  
+                l2716 0049                  l2708 002C                  l2726 006B                  l2718 0051  
+                l2728 0073                  l2694 00D5                  l2696 0015                  l2698 001A  
+                _T0IE 005D                  _T0IF 005A                  u2320 0039                  u2321 0038  
+                u2330 0046                  u2331 0045                  u2340 005B                  u2341 005A  
+                u2350 0068                  u2351 0067                  _TMR0 0001                  _WREN 0C62  
+                u1_20 007F                  u1_21 007E                  u2_20 0083                  u2_21 0082  
+                _main 0015                  btemp 007E                  start 0012                 ?_main 0078  
+               _EEADR 010D                 _CARRY 0018                 i1l708 0093                 i1l709 0093  
+               _PORTB 0006                 _PORTD 0008                 _TRISB 0086                 _TRISD 0088  
+               pclath 000A                 status 0003                 wtemp0 007E          __end_of_main 007B  
+    __end_of_InitMain 00DE                ??_main 0000                _EEDATA 010C                _EECON1 018C  
+              _EECON2 018D                i1l1760 007F                i1l1762 0083                i1l1764 0084  
+              i1l1758 007B    __size_of_IntVector 0023                saved_w 007E        __pcstackCOMMON 0078  
+        __pidataBANK0 00CB     __end_of_IntVector 009E             ?_InitMain 0078            __pmaintext 0015  
+          __pintentry 0004            ??_InitMain 0000  end_of_initialization 00B4               init_ram 00BC  
+           _d1Counter 0072             _d2Counter 0076   start_initialization 009E             _IntVector 007B  
+   __size_of_InitMain 0009           __pdataBANK0 0020           __pbssCOMMON 0070         __pcstackBANK0 0000  
+          ?_IntVector 0078             __ptext141 00D5             __ptext142 007B             __ptext143 0000  
+   interrupt_function 0004           ??_IntVector 0078              _InitMain 00D5             init_fetch 00B8  
+       __size_of_main 0066              intlevel1 0000            _OPTION_REG 0081         _display_digit 0020  

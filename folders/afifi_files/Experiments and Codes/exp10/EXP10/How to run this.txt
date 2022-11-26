@@ -1,0 +1,4 @@
+to run this
+
+
+gcc -o run file.c -lpthread

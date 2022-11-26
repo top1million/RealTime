@@ -1,0 +1,17 @@
+___awdiv: CODE, 921 0 116
+_START: CODE, 1614 0 434
+_lcd_puts: CODE, 281 0 36
+_lcd_putch: CODE, 391 0 38
+___awmod: CODE, 709 0 102
+_main: CODE, 471 0 55
+_DelayMs: CODE, 248 0 33
+_lcd_clear: CODE, 232 0 16
+_getkey: CODE, 1307 0 307
+_lcd_goto: CODE, 220 0 12
+___lldiv: CODE, 811 0 110
+_lcd_write: CODE, 317 0 37
+___llmod: CODE, 617 0 92
+___wmul: CODE, 429 0 42
+_lcd_init: CODE, 526 0 91
+_putchar: CODE, 1037 0 270
+Total: 1791

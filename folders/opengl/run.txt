@@ -1,0 +1,2 @@
+gcc ConnectDots.c -o ConnectDots -lGL -lGLU -lglut 
+

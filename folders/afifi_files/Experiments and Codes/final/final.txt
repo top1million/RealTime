@@ -1,0 +1,56 @@
+Multi Processing Approach:
+1: create a message queue
+2: create the 10 processes. Each processes has it's number (sort of like ID) the same value of the iterator in the loop where we created the processes
+3: give each one a random strength value
+4: each process then sends its' strength value to all other processes. The msg queue value for each process is its' id + 1
+5: now all processes check for their queue, and wait till they receive 9 messages exactly. They take the strength values from the messages (the message contains the id and the strength value) and arrange themselves accordingly. In case of 2 processes having the same strength, we choose the one with higher ID value
+6: the ones that arranged themselves to be the strongest 4 now should reach the wall and create a wall. This is implemented by making these 4 processes sleep for a certain period of time. Once each one of them reaches the wall, it sends a message (using msg queue) for other 3 processes to tell them that it reached the wall. Once all 4 processes receive 3 messages each, the one with the lowest ID now sends 3 messages to the next strongest 3, in order to tell them to start going to the wall. 
+7: The process repeats for B2 and B3 and then B4. To indicate that a process climbs on top of all bases consequtively, let us look at how B4 will climb: 
+	a- Message from B3 is sent to B2 to confirm that they are ready. 
+	b- B2 then sends to B1 (same way, having the one with the lowest id send data)
+	c- B1 then sends to B4. 
+	d- B4 sleeps for a while then sends a message to B1 that it climbed it. 
+	e- B1 now sends a message for B4 to confirm the climb
+	f- Same thing happens now between B4 and B2, and then B4 and B3.
+	g- Now B4 is on top
+8: when B4 is on top, it sends a message for B3 with higher ID, to which B3 now climbs on top and confirms by sending B4 a message. 
+9: B1 now sends a message for the remaining person in B3, to which it sends a message to highest B2.
+10: Now highest B2 will climb (sleep for a small time) and then send a message for Lowest ID of B3 (remaining one) to tell it that it climbed it, then does the same for B4. 
+11: once B4 receivs the message from highest B2, it sends again to B3 which in turn sends to highest of the remaining B2 in order to do the same. 
+12: Once the 2nd highest ID of B2 is on top, it sends for B4, which sends for B3, which sends for B2, and this remaining B2 will send to highest ID of B1 that it can climb now.
+13: the steps from 8-11 will now be repeated until all B1 have climbed.
+14: Once all B1 have climbed, last remaining B2 will know (since it can count) that they all finished once it gets the confirmation from B3 that the last one of them climbed. 
+15: now B2 will climb in the same way, followed by B3. Finally B4 will climb once it gets confirmation from lowest B3 ID that it climbed safely.
+
+NOTE: messages could be reduced a lot, but you specified that one process climbs on top of the other, which means we need to show that, otherwise we can just send from B4 to all other ones that need to climb one by one, and get confirmation by coommunicating only with B4.
+
+________Going Down the Wall_________
+1: once B4 goes on top, it sends for strongest (and highest ID in case of conflict) of B1 to go hold the wall. 
+2: Once B4 has held the wall, it sends a message for the second strongest (or second highest ID of B1 in case of conflict) to climg the wall. Same thing happens for the third strongest. 
+3: Now once all 3 have held themselves, the weakest of the 3 (which is now called B2) will send a message for B4 (strongest of them all) on oder to tell the prisoners to decend.
+4: B4 sends messages in order from the weakest to the strongest. 
+5: B4 knows when each of the processes reach the ground as follows:
+	a: the process sends a message confirming that it passed a certain person once it passes him. So Process 1 will send a message to B4 once it passes him and is on B3...etc.
+	b: Once B2 receivs the message, It sends a signal to B4 to tell him to bring another person
+6: now all 7 processes are on the ground, they will form a nest. The nest is done forming once the 4th strongest person has went down and done his part of the nest.
+7: 4th strongest process now sends for B2.
+8: B2 will now decend. Once it clears everything and goes to the side (executed by a sleep for a certain period), it sends a message for B3, and same thing happens which then sends a message for B4. 
+9: Strongest 3 processes won't help in the nest as they will be tired (and once the strongest of them all falls there will be no need for a nest).
+10: The prisoners are now Free. :))
+
+Multi Threading Approach:
+In Multi Threading Approach the steps of how things will be executed is the same. The difference will be in the data structures used.
+1: Since we are using Threads, we might as well use a shared memory.
+2: communication is done by checking the place of the person before you on the shared memory. For Example:
+	-Highest ID Thread in B1 will go immedietely after all processes sorted everything out.
+	-2nd Highest ID in B2 will keep checking on the shared memory where Highest ID of B1 should be located, and then goes to its' position (which will be where the highest ID of B1 is + 1*size of each cell in this 2d array shared memory. Of course + 1 in the X-Axis Alone)
+	-same thing repeats, but when the new level comes, it will check for the last one from the level below it  (Which will be Y-1 and X+3) 
+	-same thing repeats. A process knows that it reached that position by writing its' ID on that position.
+	-Since we are using a shared memory, of course we will be using a **MUTEX**. Only 1 thread can write to the shared memory at a time. 
+3: Once they all form a pyramid shape and P4 is on top. Thread from Highest ID of P3 will now climb and go on top of the wall (which will be Y+1 and X+1 from where P4 is located). Once highest ID of P2 will see that P3 has climbed (as it is constantly Checking Y+1 and X+1 from where P4 should be) it will climb up by writing 2 TIMES:
+	-ONCE for climbing to the second position, and the next time for climbing the wall itself.
+4: Same thing is repeated until all are above, then the 4 at base B1 will start climbing (same order as in multi processing, and by checking the same way as in step 3 in multi threading, and by climbing same as we said before in the subsection of step 3.
+
+
+________Going Down the Wall_________
+Same as in multi processing with what we initially said about multi threading. The way each process knows is by checking where the one before it should be, and that applied to the ground also. So they know where on the ground they will be located based on their ID and their Strength.

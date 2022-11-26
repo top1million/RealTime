@@ -1,0 +1,137 @@
+_i 72 0 COMMON
+_RD C60 0 ABS
+_WR C61 0 ABS
+_RE0 48 0 ABS
+_RE1 49 0 ABS
+_PR2 92 0 ABS
+__S0 2008 0 ABS
+__S1 74 0 ABS
+__S2 0 0 ABS
+_GIE 5F 0 ABS
+__Hintentry 0 0 CODE
+__Lintentry 0 0 CODE
+_WREN C62 0 ABS
+_main 7E9 0 CODE
+btemp 7E 0 ABS
+_exit 0 0 CODE
+start 0 0 CODE
+log@coeff 27 0 STRING
+exp@coeff 9 0 STRING
+_TRISC 87 0 ABS
+reset_vec 0 0 CODE
+_PORTC 7 0 ABS
+_EEADR 10D 0 ABS
+_PORTD 8 0 ABS
+_T2CON 12 0 ABS
+wtemp0 7E 0 ABS
+_CARRY 18 0 ABS
+__Hconfig 2008 0 CONFIG
+__Lconfig 2007 0 CONFIG
+__Hram 0 0 ABS
+__Lram 0 0 ABS
+?_main 0 0 COMMON
+_errno 70 0 COMMON
+__Hfunctab 0 0 CODE
+__Lfunctab 0 0 CODE
+_EECON1 18C 0 ABS
+_EECON2 18D 0 ABS
+__Hcommon 0 0 ABS
+__Lcommon 0 0 ABS
+__Heeprom_data 0 0 EEDATA
+__Leeprom_data 0 0 EEDATA
+_CCPR1L 15 0 ABS
+_EEDATA 10C 0 ABS
+__Habs1 0 0 ABS
+__Labs1 0 0 ABS
+__Hsfr0 0 0 ABS
+__Lsfr0 0 0 ABS
+__Hsfr1 0 0 ABS
+__Lsfr1 0 0 ABS
+__Hsfr2 0 0 ABS
+__Lsfr2 0 0 ABS
+__Hsfr3 0 0 ABS
+__Lsfr3 0 0 ABS
+__Hcode 0 0 ABS
+__Lcode 0 0 ABS
+??_main 0 0 COMMON
+__Hinit 0 0 CODE
+__Linit 0 0 CODE
+__end_of_main 800 0 CODE
+__Htext 0 0 ABS
+__Ltext 0 0 ABS
+end_of_initialization 7E5 0 CODE
+__Hstrings 0 0 ABS
+__Lstrings 0 0 ABS
+__pstrings 3 0 STRING
+_CCP1CON 17 0 ABS
+__Hbank0 0 0 ABS
+__Lbank0 0 0 ABS
+__Hbank1 0 0 ABS
+__Lbank1 0 0 ABS
+__Hbank2 0 0 ABS
+__Lbank2 0 0 ABS
+__Hbank3 0 0 ABS
+__Lbank3 0 0 ABS
+__Hpowerup 0 0 CODE
+__Lpowerup 0 0 CODE
+__Hclrtext 0 0 ABS
+__Lclrtext 0 0 ABS
+__Hidloc 0 0 IDLOC
+__Lidloc 0 0 IDLOC
+__Hcinit 0 0 ABS
+__Lcinit 0 0 ABS
+__size_of_main 0 0 ABS
+__HbssCOMMON 0 0 ABS
+__LbssCOMMON 0 0 ABS
+__pbssCOMMON 70 0 COMMON
+__Hend_init 3 0 CODE
+__Lend_init 0 0 CODE
+__Hreset_vec 0 0 CODE
+__Lreset_vec 0 0 CODE
+intlevel0 0 0 CODE
+intlevel1 0 0 CODE
+intlevel2 0 0 CODE
+intlevel3 0 0 CODE
+intlevel4 0 0 CODE
+intlevel5 0 0 CODE
+__HcstackCOMMON 0 0 ABS
+__LcstackCOMMON 0 0 ABS
+__pcstackCOMMON 0 0 COMMON
+start_initialization 7E1 0 CODE
+__Hmaintext 0 0 ABS
+__Lmaintext 0 0 ABS
+__pmaintext 7E9 0 CODE
+%segments
+reset_vec 0 5 CODE 0
+config 400E 400F CONFIG 400E
+bssCOMMON 70 73 COMMON 70
+strings 6 83 STRING 6
+maintext FD2 FFF CODE FD2
+cinit FC2 FD1 CODE FC2
+%locals
+startup.obj
+startup.as
+65 0 0 CODE
+PWM.obj
+C:\Users\fadiA\Desktop\Hardware Codes\Exp4\PWM\pwm.c
+3 2007 0 CONFIG
+C:\Program Files (x86)\HI-TECH Software\PICC\9.83\sources\exp.c
+17 9 0 STRING
+C:\Program Files (x86)\HI-TECH Software\PICC\9.83\sources\log.c
+9 27 0 STRING
+PWM.as
+204 7E1 0 CODE
+205 7E2 0 CODE
+206 7E3 0 CODE
+207 7E4 0 CODE
+214 7E5 0 CODE
+215 7E6 0 CODE
+C:\Users\fadiA\Desktop\Hardware Codes\Exp4\PWM\pwm.c
+7 7E9 0 CODE
+8 7EC 0 CODE
+11 7EF 0 CODE
+12 7F3 0 CODE
+13 7F7 0 CODE
+21 7FA 0 CODE
+22 7FC 0 CODE
+23 7FD 0 CODE

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <time.h>
+#include <sys/msg.h>
+#include <sys/shm.h>
+#include <stdlib.h>
+
+struct test{
+      int x;
+      char text1[30];
+      char text2[100];
+      char text3[20];
+
+};
+int main ()
+{
+	int shmID;
+        struct test *s;
+        shmID = shmget(1000,sizeof(struct test)*5, 0666 | IPC_CREAT);
+        printf("shmID = %d\n",shmID);
+        if(shmID < 0){
+		printf("error\n");
+        }
+        s= (struct test *)shmat(shmID, NULL, 0);
+        s[1].x=66;
+        printf("Sent value: %d\n",s[1].x);
+        shmdt(s);
+        return 0;
+}
