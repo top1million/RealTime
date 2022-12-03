@@ -18,18 +18,21 @@ void players_ready();
 void response_received(int);
 void response_received2(int);
 void signal_catcher_ready_state(int);
+void reset_round();
+void announce_winner();
 int ready_counter = 0; 
 int first_team_counter = 0;
 int second_team_counter = 1;
 id_t pid, players[numOfPlayers] ;
-
-
-
+int team_one_winning_counter = 0;
+int team_two_winning_counter = 0;
+int rounds = 0;
 
 int main()
 {
   int i;
-  
+  printf("please enter the number of rounds you want the players to play : ");
+  scanf("%d", &rounds);
   printf("My process ID is %d\n", getpid());
   if ( sigset(10, signal_catcher_ready_state) == -1 ) {
   perror("Sigset can not set SIGINT");
@@ -45,6 +48,7 @@ int main()
   }
   for ( i = 0; i < numOfPlayers; i++ ) 
   {
+    sleep(2);
     pid = fork();
 
     // case 0: failure to create child
@@ -82,6 +86,7 @@ int main()
   }
 
   while(1);
+  
 
 
   // while(1); 
@@ -103,6 +108,7 @@ void signal_catcher_ready_state(int sig_num)
 
 void response_received(int signum) 
 {
+  announce_winner();
   printf("1 idiot has finished \n");
   first_team_counter+= 2;
   if(first_team_counter < numOfPlayers){
@@ -110,7 +116,10 @@ void response_received(int signum)
   kill(players[first_team_counter], 3);
   }
   else{
-    printf("first team has won\n");
+    team_one_winning_counter++;
+    printf("shit please shit please %d",team_one_winning_counter);
+    announce_winner();
+    reset_round();
   }
 }
 
@@ -119,6 +128,7 @@ void response_received(int signum)
 
 void response_received2(int signum) 
 {
+  
   printf("2 idiot has finished \n");
   second_team_counter+= 2;
   printf("2nd team conunter %d\n", second_team_counter);
@@ -127,16 +137,38 @@ void response_received2(int signum)
   kill(players[second_team_counter], 3);
   }
   else{
-    printf("second team has won\n");
+    team_two_winning_counter++;
+    printf("shit please shit please %d",team_two_winning_counter);
+    announce_winner();
+    reset_round();
   }
 }
 
+void reset_round(){
+  first_team_counter = 0;
+  second_team_counter = 1;
+  kill(players[first_team_counter], 3);
+  kill(players[second_team_counter], 3);
+}
 
 
 // 0 1 2 3     0==team1    1==team2     2==team1    3==team2
 
 
-
+void announce_winner(){
+  if(team_one_winning_counter == rounds){
+      printf("team one won the game \n");
+      exit(0);
+    }
+    else if(team_two_winning_counter == rounds){
+      printf("team two won the game \n");
+      exit(0);
+    }
+    if(team_one_winning_counter == rounds && team_two_winning_counter == rounds){
+      printf("the game is draw \n");
+      exit(0);
+    }
+}
 
 
 
