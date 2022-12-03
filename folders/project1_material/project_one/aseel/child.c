@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
 }
 
 void signal_catcher(int sig){
-    int speed = rand()%5+3 ;
+    int speed = 3+getpid()%5;
+    
     while(distance > 0){
         printf("Child %d is running at speed %d \n", getpid(), speed);
         distance -= speed;

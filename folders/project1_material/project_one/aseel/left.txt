@@ -1,0 +1,4 @@
+1)Rounds  ===>   Reset after each round
+2)caculate the winner
+3)terminate   ===>   kill all resouces when game is done
+
