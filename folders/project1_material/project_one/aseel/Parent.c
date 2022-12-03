@@ -8,26 +8,25 @@
 #include <stdlib.h>
 #include <signal.h>
 #define  ROUNDS 3 
-#define  numOfPlayers 4
+#define  numOfPlayers 2
 #define  NUM_OF_TEAMS  2
 int points [NUM_OF_TEAMS];
 
-void terminate();
-void terminate_all(int);
+void terminate_all();
 void players_ready();
 void response_received(int);
 void response_received2(int);
 void signal_catcher_ready_state(int);
-void reset_round();
+void new_round();
 void announce_winner();
 int ready_counter = 0; 
-int first_team_counter = 0;
-int second_team_counter = 1;
+int teamOnePlayer = 0;
+int teamTwoPlayer = 1;
 id_t pid, players[numOfPlayers] ;
-int team_one_winning_counter = 0;
-int team_two_winning_counter = 0;
+int teamOneRounds = 0;
+int teamTwoRounds = 0;
 int rounds = 0;
-
+int winning_flag = 0 ;
 int main()
 {
   int i;
@@ -76,9 +75,9 @@ int main()
 
   while(1){
   if (ready_counter == numOfPlayers ){
-    printf("All players are ready \n Sending signal to all players to start \n");
+    printf("All players are ready \nSending starting signal to  players to start \n");
     for(int i = 0 ; i < 2 ; i ++){
-      printf("sending signal to player %d\n", players[i]);
+      printf("Sending signal to player %d from team %d\n", players[i],i%2 + 1);
       kill(players[i], 3);
     }
     break;
@@ -99,27 +98,26 @@ int main()
 
 void signal_catcher_ready_state(int sig_num)
 {
-  printf("Received signal \n");
   ready_counter ++;
-  printf("*************%d******************\n",ready_counter);
 }
 
 
 
 void response_received(int signum) 
 {
-  announce_winner();
-  printf("1 idiot has finished \n");
-  first_team_counter+= 2;
-  if(first_team_counter < numOfPlayers){
-    printf("sending signal to player %d\n", players[first_team_counter]);
-  kill(players[first_team_counter], 3);
+  printf("the %d player in team one player has finished 50 meters \n", teamOnePlayer-1);
+  teamOnePlayer+= 2;
+  if(teamOnePlayer < numOfPlayers){
+    printf("sending signal to player %d from team one\n", players[teamOnePlayer]);
+    kill(players[teamOnePlayer], 3);
   }
   else{
-    team_one_winning_counter++;
-    printf("shit please shit please %d",team_one_winning_counter);
+    teamOneRounds ++;
+    rounds -= 1;
     announce_winner();
-    reset_round();
+    kill(players[teamTwoPlayer], 15);
+    printf("************* team one has finished the %d round **************\n",teamOneRounds);
+    new_round();
   }
 }
 
@@ -129,26 +127,30 @@ void response_received(int signum)
 void response_received2(int signum) 
 {
   
-  printf("2 idiot has finished \n");
-  second_team_counter+= 2;
-  printf("2nd team conunter %d\n", second_team_counter);
-  if(second_team_counter < numOfPlayers){
-    printf("sending signal to player %d\n", players[second_team_counter]);
-  kill(players[second_team_counter], 3);
+  printf("the %d player in team 2 player finsihed 50 meters\n",teamTwoPlayer-1);
+  teamTwoPlayer+= 2;
+  if(teamTwoPlayer < numOfPlayers){
+    printf("sending signal to player %d from team two\n", players[teamTwoPlayer]);
+  kill(players[teamTwoPlayer], 3);
   }
   else{
-    team_two_winning_counter++;
-    printf("shit please shit please %d",team_two_winning_counter);
+    teamTwoRounds++;
+    rounds -= 1 ;
     announce_winner();
-    reset_round();
+    kill(players[teamOnePlayer], 15);
+    printf("************* team two has finished the %d round **************\n",teamTwoRounds);
+    new_round();
   }
 }
 
-void reset_round(){
-  first_team_counter = 0;
-  second_team_counter = 1;
-  kill(players[first_team_counter], 3);
-  kill(players[second_team_counter], 3);
+void new_round(){
+  while (teamTwoRounds != teamTwoRounds){
+    sleep(1);
+  }
+  teamOnePlayer = 0;
+  teamTwoPlayer = 1;
+  kill(players[teamOnePlayer], 3);
+  kill(players[teamTwoPlayer], 3);
 }
 
 
@@ -156,22 +158,29 @@ void reset_round(){
 
 
 void announce_winner(){
-  if(team_one_winning_counter == rounds){
-      printf("team one won the game \n");
-      exit(0);
+  if(rounds == 0){
+    if(teamOneRounds > teamTwoRounds){
+      printf("team one has won the game \n");
+      terminate_all();
     }
-    else if(team_two_winning_counter == rounds){
-      printf("team two won the game \n");
-      exit(0);
+    else if(teamOneRounds < teamTwoRounds){
+      printf("team two has won the game \n");
+      terminate_all();
     }
-    if(team_one_winning_counter == rounds && team_two_winning_counter == rounds){
-      printf("the game is draw \n");
-      exit(0);
+    else{
+      printf("the game is a draw \n");
+      terminate_all();
     }
+}
 }
 
 
-
+void terminate_all(){
+  for(int i = 0 ; i < numOfPlayers ; i++){
+    kill(players[i], 9);
+  }
+  exit(10);
+}
 
 
 
@@ -188,7 +197,8 @@ void announce_winner(){
 /*
 
 1,6        2,7      3,8      4,9       numOfPlayers,10
-0           1        2        3        4
+0           1        2        3        4 = 1
+                                       4
 
 
 
