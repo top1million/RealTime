@@ -79,3 +79,10 @@ To go to the next line, use the command:
 
 
 Good Luck.
+
+
+to follow child in debugging or parent
+set follow-fork-mode child
+set follow-fork-mode parent
+
+there is a exp5 for lab linux

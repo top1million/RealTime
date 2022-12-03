@@ -16,20 +16,33 @@ void terminate();
 void terminate_all(int);
 void players_ready();
 void response_received(int);
-void collect_responses();
-void calculate_points();
-void announce_new_round();
-void end_game();
+void response_received2(int);
 void signal_catcher_ready_state(int);
 int ready_counter = 0; 
+int first_team_counter = 0;
+int second_team_counter = 1;
+id_t pid, players[numOfPlayers] ;
+
+
+
 
 int main()
 {
   int i;
-  id_t pid, players[numOfPlayers] ;
   
   printf("My process ID is %d\n", getpid());
-
+  if ( sigset(10, signal_catcher_ready_state) == -1 ) {
+  perror("Sigset can not set SIGINT");
+  exit(SIGINT);
+  }
+  if (sigset(12, response_received) == -1) {
+    perror("Sigset can not set SIGINT");
+    exit(SIGINT);
+  }
+    if (sigset(13, response_received2) == -1) {
+    perror("Sigset can not set SIGINT");
+    exit(SIGINT);
+  }
   for ( i = 0; i < numOfPlayers; i++ ) 
   {
     pid = fork();
@@ -41,39 +54,34 @@ int main()
     }
     // case 1: childe process 
     if ( pid == 0 ) { 
-      printf("\nI am the child  => PID = %d\n", getpid());
+      sleep(1);
+      // printf("\nI am the child  => PID = %d\n", getpid());
       if(i%2 == 0 )
-      execlp("./child", "shit", (char *) NULL); // cat: concatinate 
+      execlp("./fork4", "shit", (char *) NULL); // cat: concatinate 
       else
-      execlp("./child", "shitno", (char *) NULL); // cat: concatinate
+      execlp("./fork4", "shitno", (char *) NULL); // cat: concatinate
       perror("exec failure "); // this when there is an exec failure : No such file or directory
       while(1); 
     }
     // case 2: parent process
     else
-      printf("I am the parent => PID = %d\n", getpid());
+      // printf("I am the parent => PID = %d\n", getpid());
       players[i] = pid; //! saves the id of my child
   }
 
 
-  for(int i = 0 ; i <numOfPlayers ; i ++){
-    printf("team one %d \n", players[i]);
-
-  }
-  if ( sigset(SIGINT, signal_catcher_ready_state) == -1 ) {
-  perror("Sigset can not set SIGINT");
-  exit(SIGINT);
-  }
+  while(1){
   if (ready_counter == numOfPlayers ){
     printf("All players are ready \n Sending signal to all players to start \n");
-    for(int i = 0 ; i <numOfPlayers ; i ++){
+    for(int i = 0 ; i < 2 ; i ++){
       printf("sending signal to player %d\n", players[i]);
       kill(players[i], 3);
     }
-    
+    break;
   }
-  pause();
-  printf("Game over \n");
+  }
+
+  while(1);
 
 
   // while(1); 
@@ -86,56 +94,46 @@ int main()
 
 void signal_catcher_ready_state(int sig_num)
 {
-  printf("Received signal from %d\n", getpid());
+  printf("Received signal \n");
   ready_counter ++;
-  printf("*************%d\n",ready_counter);
+  printf("*************%d******************\n",ready_counter);
 }
 
-void terminate_all(int signum) 
-{
- 
-}
+
 
 void response_received(int signum) 
 {
- 
+  printf("1 idiot has finished \n");
+  first_team_counter+= 2;
+  if(first_team_counter < numOfPlayers){
+    printf("sending signal to player %d\n", players[first_team_counter]);
+  kill(players[first_team_counter], 3);
+  }
+  else{
+    printf("first team has won\n");
+  }
 }
 
-void players_ready() 
+
+
+
+void response_received2(int signum) 
 {
-  
-}
-
-void collect_responses()
-{
-
-}
-
-void calculate_points() 
-{
-
-}
-
-void announce_new_round() 
-{
-
-}
-
-// end the game if the last player from any team reach the first station
-void end_game() 
-{
-
-}
-
-void terminate()
-{
-
+  printf("2 idiot has finished \n");
+  second_team_counter+= 2;
+  printf("2nd team conunter %d\n", second_team_counter);
+  if(second_team_counter < numOfPlayers){
+    printf("sending signal to player %d\n", players[second_team_counter]);
+  kill(players[second_team_counter], 3);
+  }
+  else{
+    printf("second team has won\n");
+  }
 }
 
 
 
-
-
+// 0 1 2 3     0==team1    1==team2     2==team1    3==team2
 
 
 
