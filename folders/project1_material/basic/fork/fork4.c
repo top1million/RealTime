@@ -21,8 +21,15 @@ int main()
       while(1);
     }
     else {
+	int	r = 0;
+	int k = 3;
+	while(k > 0){
+	k--;
+	r+= rand();
+	}
       printf("I am the parent => PID = %d, child ID = %d\n", getpid(), pid);
-      pid_array[i] = pid;
+      printf("\nrandom number %d\n " , r);
+	 pid_array[i] = pid;
     }
   }
   //while( 1 ) {

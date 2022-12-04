@@ -46,7 +46,10 @@ int main(int argc, char *argv[])
 }
 
 void signal_catcher(int sig){
-    int speed = 3+getpid()%5;
+    srand(getpid());
+    int randz= rand() % 7;
+    printf("randz = %d \n", randz);
+    int speed = 3+getpid()%randz;
     reset_round = 0;
     distance  = 50;
     while(distance > 0 && reset_round == 0){
