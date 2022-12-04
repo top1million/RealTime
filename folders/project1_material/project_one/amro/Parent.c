@@ -10,7 +10,7 @@
 #include <string.h>  
 #include <ctype.h>
 
-#define  numOfPlayers  10           /* defult value of the number of players */
+#define  numOfPlayers  100           /* defult value of the number of players */
 #define  NUM_OF_TEAMS  2              /* defult value of the number of teams */
 
 int points [NUM_OF_TEAMS];            /* array of the points of the teams */
@@ -22,7 +22,7 @@ int teamOneRounds = 0;                /* counter of the rounds of team 1 */
 int teamTwoRounds = 0;                /* counter of the rounds of team 2 */
 int rounds = 5;                       /* counter of the rounds */
 int winning_flag = 0 ;                /* flag of the winning team */
-
+int flag = 1;
 void terminate_all();                 /* function to terminate all the players */
 void players_ready();                 /* function to handle the ready signal */
 void response_received(int);          /* function to handle the response signal from team 1 */
@@ -30,8 +30,6 @@ void response_received2(int);         /* function to handle the response signal 
 void signal_catcher_ready_state(int); /* function to handle the ready signal */
 void new_round();                     /* function to handle the new round signal */
 void announce_winner();               /* function to announce the winner */
-
-
 
 int main()
 {
@@ -64,7 +62,7 @@ int main()
   printf("My process ID is %d\n", getpid());
   printf("Children IDs:\n");
 
-  if ( sigset(10, signal_catcher_ready_state) == -1 ) {  /* set the signal catcher for the ready signal */
+  if (sigset(10,signal_catcher_ready_state)==-1){
     perror("Sigset can not set SIGUSR1");
     exit(SIGINT);
   }
@@ -79,7 +77,7 @@ int main()
 
   for ( i = 0; i < numOfPlayers; i++ ) 
   {
-    sleep(3);                                        /* sleep for 6 seconds */
+    flag = 1 ;
     pid = fork();                                   /* create a child process */
 
     // case 0: failure to create child
@@ -89,7 +87,7 @@ int main()
     }
     // case 1: childe process 
     if ( pid == 0 ) { 
-      sleep(2);
+      
       if(i%2 == 0 )
       execlp("./child", "team1", (char *) NULL);   /* execute the child file with the argument team1 */
       else
@@ -101,6 +99,7 @@ int main()
     else
       players[i] = pid;                         // saves the id of my child
       printf("%d, ", players[i]); 
+    while(flag == 1);
   }
 
   while(1){ 
@@ -119,13 +118,10 @@ int main()
   return(0);
 }
 
-// *  this function is called when the parent receives a signal from the child that he is ready
-void signal_catcher_ready_state(int sig_num)
-{
-  ready_counter ++;
+void signal_catcher_ready_state(int signum){
+  flag = 0;
+  ready_counter++;
 }
-
-
 // * this function is called when the parent receives a signal from the child from team 1 that he finished his round
 void response_received(int signum) 
 {
@@ -145,8 +141,6 @@ void response_received(int signum)
     new_round();
   }
 }
-
-
 
 // * this function is called when the parent receives a signal from the child from team 2 that he finished his round
 void response_received2(int signum) 

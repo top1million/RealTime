@@ -18,21 +18,7 @@ int main(int argc, char *argv[])
 
     printf("Invalid arguments: %d\n", argc);
     exit(-1);
-    }
-
-
-    sleep(1); 
-    kill(getppid(),10);           /* send signal to parent to start the game */
-    if(strcmp("team1", *argv) == 0){
-        teamFlag = 1 ;           /* set the team flag to 1 if the player is from team one */
-    }
-    else{
-        teamFlag = 2 ;          /* set the team flag to 2 if the player is from team two */
-    }
-
-
-    while(1)
-    { 
+    } 
 
     if(sigset(3, signal_catcher) == -1){  /* set the signal catcher for signal 3 */
         perror("Sigset can not set SIGQUIT");
@@ -42,7 +28,18 @@ int main(int argc, char *argv[])
         perror("Sigset can not set SIGTERM");
         exit(SIGINT);
     }
+
+    if(strcmp("team1", *argv) == 0){
+        teamFlag = 1 ;           /* set the team flag to 1 if the player is from team one */
     }
+    else{
+        teamFlag = 2 ;          /* set the team flag to 2 if the player is from team two */
+    }
+
+    kill(getppid(),10); /* send signal 10 to parent to indicate that the child is ready */
+    while(1); /* keep the process running */
+    
+    
     
     return 0;
 }

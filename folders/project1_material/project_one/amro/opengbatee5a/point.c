@@ -2,6 +2,29 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
+
+int main(int argc, char** argv)
+{
+   // if(sigset(3, signal_catcher) == -1){  /* set the signal catcher for signal 3 */
+   //      perror("Sigset can not set SIGQUIT");
+   //      exit(SIGINT);
+   //  }
+   //  if(sigset(15,round_reset_func) == -1){  /* set the signal catcher for signal 15 */
+   //      perror("Sigset can not set SIGTERM");
+   //      exit(SIGINT);
+   //  }
+   glutInit(&argc, argv);
+   glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+   glutInitWindowSize (1200, 700);
+   glutInitWindowPosition (450, 150);
+   glutCreateWindow (argv[0]);
+   init ();
+   glutDisplayFunc(display); 
+   glutReshapeFunc(reshape);
+   glutMainLoop();
+   return 0;
+}
 int x = 1.0;
 int y = 1.0;
 void init(void) 
@@ -12,12 +35,29 @@ void init(void)
 
 void display(void)
 {
-   double x = 0.0;
-   double y = 0.0;
+   double team_one_player_one_x = 0.0;
+   double team_one_player_one_y = 0.0;
+   double team_one_player_two_x = 0.0;
+   double team_one_player_two_y = 0.0;
+   double team_one_player_three_x = 0.0;
+   double team_one_player_three_y = 0.0;
+   double team_one_player_four_x = 0.0;
+   double team_one_player_four_y = 0.0;
+   double team_one_player_five_x = 0.0;
+   double team_one_player_five_y = 0.0;
+   double team_two_player_one_x = 0.0;
+   double team_two_player_one_y = 0.0;
+   double team_two_player_two_x = 0.0;
+   double team_two_player_two_y = 0.0;
+   double team_two_player_three_x = 0.0;
+   double team_two_player_three_y = 0.0;
+   double team_two_player_four_x = 0.0;
+   double team_two_player_four_y = 0.0;
+   double team_two_player_five_x = 0.0;
+   double team_two_player_five_y = 0.0;
+
    for(int i = 0; i < 20; i++){
-      for(int z = 0 ; z<100000000; z++){
-         //do nothing
-      }
+      sleep(1);
       glClear (GL_COLOR_BUFFER_BIT);
       glPointSize(20);
       glColor3f(0.0,0.0,1.0);
@@ -88,19 +128,6 @@ void reshape (int w, int h)
 
 
 
-int main(int argc, char** argv)
-{
-   glutInit(&argc, argv);
-   glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
-   glutInitWindowSize (1200, 700);
-   glutInitWindowPosition (450, 150);
-   glutCreateWindow (argv[0]);
-   init ();
-   glutDisplayFunc(display); 
-   glutReshapeFunc(reshape);
-   glutMainLoop();
-   return 0;
-}
 // void team_one_player_one(void){
 //    //player one
 //    glPointSize(20);
