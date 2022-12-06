@@ -4,50 +4,50 @@
 #include <stdio.h>
 #include <signal.h>
 
-int x = 1.0;
-int y = 1.0;
+
+void signal_catcher_team_one_speed_5(int);
+void signal_catcher_team_one_speed_6(int);
+void signal_catcher_team_one_speed_7(int);
+void signal_catcher_team_one_speed_8(int);
+void signal_catcher_team_one_speed_9(int);
+void signal_catcher_team_two_speed_5(int); 
+void signal_catcher_team_two_speed_6(int);
+void signal_catcher_team_two_speed_7(int);
+void signal_catcher_team_two_speed_8(int);
+void signal_catcher_team_two_speed_9(int);
+int team_one_player = 1;
+int team_two_player = 1;
+double team_one_player_one_x = -1.25;
+double team_one_player_one_y = 0.40;
+double team_one_player_two_x = -0.75;
+double team_one_player_two_y = 0.40;
+double team_one_player_three_x = -0.25;
+double team_one_player_three_y = 0.40;
+double team_one_player_four_x = 0.25;
+double team_one_player_four_y =0.40;
+double team_one_player_five_x = 0.75;
+double team_one_player_five_y = 0.40;
+double team_two_player_one_x = -1.25;
+double team_two_player_one_y = 0.25;
+double team_two_player_two_x = -0.75;
+double team_two_player_two_y = 0.25;
+double team_two_player_three_x = -0.25;
+double team_two_player_three_y = 0.25;
+double team_two_player_four_x = 0.25;
+double team_two_player_four_y = 0.25;
+double team_two_player_five_x = 0.75;
+double team_two_player_five_y = 0.25;
 
 void init(void) 
 {
    glClearColor (0.0, 0.0, 0.0, 0.0);
    glShadeModel (GL_FLAT);
 }
-
 void display(void)
 {
-   double team_one_player_one_x = 0.0;
-   double team_one_player_one_y = 0.0;
-   double team_one_player_two_x = 0.0;
-   double team_one_player_two_y = 0.0;
-   double team_one_player_three_x = 0.0;
-   double team_one_player_three_y = 0.0;
-   double team_one_player_four_x = 0.0;
-   double team_one_player_four_y = 0.0;
-   double team_one_player_five_x = 0.0;
-   double team_one_player_five_y = 0.0;
-   double team_two_player_one_x = 0.0;
-   double team_two_player_one_y = 0.0;
-   double team_two_player_two_x = 0.0;
-   double team_two_player_two_y = 0.0;
-   double team_two_player_three_x = 0.0;
-   double team_two_player_three_y = 0.0;
-   double team_two_player_four_x = 0.0;
-   double team_two_player_four_y = 0.0;
-   double team_two_player_five_x = 0.0;
-   double team_two_player_five_y = 0.0;
 
-   for(int i = 0; i < 20; i++){
-      sleep(1);
-      glClear (GL_COLOR_BUFFER_BIT);
-      glPointSize(20);
-      glColor3f(0.0,0.0,1.0);
-      glBegin(GL_POINTS);
-      x = x + 0.1;
-      y = y + 0.1;
-      glVertex2f(x,y);
-      glEnd();
-
-
+   while(1){
+      glClear (GL_COLOR_BUFFER_BIT);   
       display_station();
       display_team_one();
       display_team_two();
@@ -57,7 +57,7 @@ void display(void)
 }
 void display_station(void){
    //create 4 dots in the middle of the screen
-   glPointSize(100);
+   glPointSize(65);
    glColor3f (1.0, 1.0, 1.0);
    glBegin(GL_POINTS);
    glVertex2f(-1.20, 0.30);   //mostleft
@@ -75,11 +75,11 @@ void display_team_one(void){
    glPointSize(20);
    glColor3f (1.0, 0.0, 0.0);
    glBegin(GL_POINTS);
-   glVertex2f(-0.05, 1.50); //top
-   glVertex2f(1.10, 0.30); //right
-   glVertex2f(-1.20, 0.30); //left
-   glVertex2f(0.70, -1.30); //bottom right
-   glVertex2f(-0.70, -1.30); //bottom left
+   team_one_player_one();
+   team_one_player_two();
+   team_one_player_three();
+   team_one_player_four();
+   team_one_player_five();
    glEnd();
 
 }
@@ -88,11 +88,11 @@ void display_team_two(void){
    glPointSize(20);
    glColor3f (0.0, 1.0, 0.0);
    glBegin(GL_POINTS);
-   glVertex2f(0.05, 1.50); //top
-   glVertex2f(1.20, 0.30); //right
-   glVertex2f(-1.10, 0.30); //left
-   glVertex2f(0.80, -1.30); //bottom right
-   glVertex2f(-0.60, -1.30); //bottom left
+   team_two_player_one();
+   team_two_player_two();
+   team_two_player_three();
+   team_two_player_four();
+   team_two_player_five();
    glEnd();
 
 }
@@ -110,14 +110,49 @@ void reshape (int w, int h)
 
 int main(int argc, char** argv)
 {
-   // if(sigset(3, signal_catcher) == -1){  /* set the signal catcher for signal 3 */
-   //      perror("Sigset can not set SIGQUIT");
-   //      exit(SIGINT);
-   //  }
-   //  if(sigset(15,round_reset_func) == -1){  /* set the signal catcher for signal 15 */
-   //      perror("Sigset can not set SIGTERM");
-   //      exit(SIGINT);
-   //  }
+   if(sigset(20, signal_catcher_team_one_speed_5) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(21, signal_catcher_team_one_speed_6) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(22, signal_catcher_team_one_speed_7) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(23, signal_catcher_team_one_speed_8) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(24, signal_catcher_team_one_speed_9) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(25, signal_catcher_team_two_speed_5) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(26, signal_catcher_team_two_speed_6) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(27, signal_catcher_team_two_speed_7) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(28, signal_catcher_team_two_speed_8) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(29, signal_catcher_team_two_speed_9) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+
+
+
    glutInit(&argc, argv);
    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
    glutInitWindowSize (1200, 700);
@@ -129,51 +164,184 @@ int main(int argc, char** argv)
    glutMainLoop();
    return 0;
 }
+void signal_catcher_team_one_speed_5(int sig){
+   team_one_speed_maker(0.05);
+}
+void signal_catcher_team_one_speed_6(int sig){
+   team_one_speed_maker(0.06);
+}
+void signal_catcher_team_one_speed_7(int sig){
+   team_one_speed_maker(0.07);
+}
+void signal_catcher_team_one_speed_8(int sig){
+   team_one_speed_maker(0.08);
+}
+void signal_catcher_team_one_speed_9(int sig){
+   team_one_speed_maker(0.09);
+}
+void signal_catcher_team_two_speed_5(int sig){
+   team_two_speed_maker(0.05);
+}
+void signal_catcher_team_two_speed_6(int sig){
+   team_two_speed_maker(0.06);
+}
+void signal_catcher_team_two_speed_7(int sig){
+   team_two_speed_maker(0.07);
+}
+void signal_catcher_team_two_speed_8(int sig){
+   team_two_speed_maker(0.08);
+}
+void signal_catcher_team_two_speed_9(int sig){
+   team_two_speed_maker(0.09);
+}
+void team_one_speed_maker(double speed){
+   if(team_one_player == 1){
+      team_one_player_one_x += speed;
+      if (team_one_player_one_x >= -0.75){
+         team_one_player = 2;
+      }
+   }
+   else if(team_one_player == 2){
+      team_one_player_two_x += speed;
+      if(team_one_player_two_x >= -0.25){
+         team_one_player = 3;
+      }
+   }
+   else if(team_one_player == 3){
+      team_one_player_three_x += speed;
+      if(team_one_player_three_x >= 0.25){
+         team_one_player = 4;
+      }
+   }
+   else if(team_one_player == 4){
+      team_one_player_four_x += speed;
+      if(team_one_player_four_x >= 0.75){
+         team_one_player = 5;
+      }
+   }
+   else if(team_one_player == 5){
+      team_one_player_five_x += speed;
+      if(team_one_player_five_x >= 1.25){
+         reset_players();
+      }
+}
+}
+void team_two_speed_maker(double speed){
+   if(team_two_player == 1){
+      team_two_player_one_x += speed;
+      if (team_two_player_one_x >= -0.75){
+         team_two_player = 2;
+      }
+   }
+   else if(team_two_player == 2){
+      team_two_player_two_x += speed;
+      if(team_two_player_two_x >= -0.25){
+         team_two_player = 3;
+      }
+   }
+   else if(team_two_player == 3){
+      team_two_player_three_x += speed;
+      if(team_two_player_three_x >= 0.25){
+         team_two_player = 4;
+      }
+   }
+   else if(team_two_player == 4){
+      team_two_player_four_x += speed;
+      if(team_two_player_four_x >= 0.75){
+         team_two_player = 5;
+      }
+   }
+   else if(team_two_player == 5){
+      team_two_player_five_x += speed;
+      if(team_two_player_five_x >= 1.25){
+         reset_players();
+      }
+   }
+}
+
+void reset_players(){
+   team_one_player_one_x = -1.25;
+   team_one_player_two_x = -0.75;
+   team_one_player_three_x = -0.25;
+   team_one_player_four_x = 0.25;
+   team_one_player_five_x = 0.75;
+   team_one_player = 1;
+   team_two_player_one_x= -1.25;
+   team_two_player_two_x= -0.75;
+   team_two_player_three_x= -0.25;
+   team_two_player_four_x= 0.25;
+   team_two_player_five_x= 0.75;
+}   
 
 
 
-// void team_one_player_one(void){
-//    //player one
-//    glPointSize(20);
-//    glColor3f (0.0, 0.0, 1.0);
-//    glBegin(GL_POINTS);
-//    glVertex2f(0.0, 0.0); //top
-//    glEnd();
-//    glFlush();
-// }
-// void team_one_player_two(void){
-//    //player two
-//    glPointSize(20);
-//    glColor3f (0.0, 0.0, 1.0);
-//    glBegin(GL_POINTS);
-//    glVertex2f(0.0, 0.0); //top
-//    glEnd();
-//    glFlush();
-// }
-// void team_one_player_three(void){
-//    //player three
-//    glPointSize(20);
-//    glColor3f (0.0, 0.0, 1.0);
-//    glBegin(GL_POINTS);
-//    glVertex2f(0.0, 0.0); //top
-//    glEnd();
-//    glFlush();
-// }
-// void team_one_player_four(void){
-//    //player four
-//    glPointSize(20);
-//    glColor3f (0.0, 0.0, 1.0);
-//    glBegin(GL_POINTS);
-//    glVertex2f(0.0, 0.0); //top
-//    glEnd();
-//    glFlush();
-// }
-// void team_one_player_five(void){
-//    //player five
-//    glPointSize(20);
-//    glColor3f (0.0, 0.0, 1.0);
-//    glBegin(GL_POINTS);
-//    glVertex2f(0.0, 0.0); //top
-//    glEnd();
-//    glFlush();
-// }
+void team_one_player_one(int x,int y){
+   glPointSize(20);
+   glColor3f (1.0, 0.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_one_player_one_x, team_one_player_one_y); //top
+   glEnd();
+}
+void team_one_player_two(void){
+   glPointSize(20);
+   glColor3f (1.0, 1.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_one_player_two_x, team_one_player_two_y); //top
+   glEnd();
+}
+void team_one_player_three(void){
+   glPointSize(20);
+   glColor3f (1.0, 0.0, 1.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_one_player_three_x, team_one_player_three_y); //top
+   glEnd();
+}
+void team_one_player_four(void){
+   glPointSize(20);
+   glColor3f (0.0, 1.0,  1.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_one_player_four_x, team_one_player_four_y); //top
+   glEnd();
+}
+void team_one_player_five(void){
+   glPointSize(20);
+   glColor3f (0.0, 0.0, 1.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_one_player_five_x, team_one_player_five_y); //top
+   glEnd();
+}
+void team_two_player_one(void){
+   glPointSize(20);
+   glColor3f (0.0, 1.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_two_player_one_x, team_two_player_one_y); //top
+   glEnd();
+}
+void team_two_player_two(void){
+   glPointSize(20);
+   glColor3f (0.0, 1.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_two_player_two_x, team_two_player_two_y); //top
+   glEnd();
+}
+void team_two_player_three(void){
+   glPointSize(20);
+   glColor3f (0.0, 1.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_two_player_three_x, team_two_player_three_y); //top
+   glEnd();
+}
+void team_two_player_four(void){
+   glPointSize(20);
+   glColor3f (0.0, 1.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_two_player_four_x, team_two_player_four_y); //top
+   glEnd();
+}
+void team_two_player_five(void){
+   glPointSize(20);
+   glColor3f (0.0, 1.0, 0.0);
+   glBegin(GL_POINTS);
+   glVertex2f(team_two_player_five_x, team_two_player_five_y); //top
+   glEnd();
+}
