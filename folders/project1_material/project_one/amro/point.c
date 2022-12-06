@@ -319,28 +319,28 @@ void team_one_player_one(int x,int y){
 }
 void team_one_player_two(void){
    glPointSize(20);
-   glColor3f (1.0, 1.0, 0.0);
+   glColor3f (1.0, 0.0, 0.0);
    glBegin(GL_POINTS);
    glVertex2f(team_one_player_two_x, team_one_player_two_y); //top
    glEnd();
 }
 void team_one_player_three(void){
    glPointSize(20);
-   glColor3f (1.0, 0.0, 1.0);
+   glColor3f (1.0, 0.0, 0.0);
    glBegin(GL_POINTS);
    glVertex2f(team_one_player_three_x, team_one_player_three_y); //top
    glEnd();
 }
 void team_one_player_four(void){
    glPointSize(20);
-   glColor3f (0.0, 1.0,  1.0);
+   glColor3f (1.0, 0.0, 0.0);
    glBegin(GL_POINTS);
    glVertex2f(team_one_player_four_x, team_one_player_four_y); //top
    glEnd();
 }
 void team_one_player_five(void){
    glPointSize(20);
-   glColor3f (0.0, 0.0, 1.0);
+   glColor3f (1.0, 0.0, 0.0);
    glBegin(GL_POINTS);
    glVertex2f(team_one_player_five_x, team_one_player_five_y); //top
    glEnd();
