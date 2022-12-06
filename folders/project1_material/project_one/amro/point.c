@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-
+#include <math.h>
+#include <string.h>
 
 void signal_catcher_team_one_speed_5(int);
 void signal_catcher_team_one_speed_6(int);
@@ -15,8 +16,11 @@ void signal_catcher_team_two_speed_6(int);
 void signal_catcher_team_two_speed_7(int);
 void signal_catcher_team_two_speed_8(int);
 void signal_catcher_team_two_speed_9(int);
+void team_two_changer(int);
+void team_one_changer(int);
 int team_one_player = 1;
 int team_two_player = 1;
+int rounds = 0 ;
 double team_one_player_one_x = -1.25;
 double team_one_player_one_y = 0.40;
 double team_one_player_two_x = -0.75;
@@ -109,7 +113,8 @@ void reshape (int w, int h)
 }
 
 int main(int argc, char** argv)
-{
+{  
+
    if(sigset(20, signal_catcher_team_one_speed_5) == -1){  /* set the signal catcher for signal 3 */
          perror("Sigset can not set SIGQUIT");
          exit(SIGINT);
@@ -150,8 +155,15 @@ int main(int argc, char** argv)
          perror("Sigset can not set SIGQUIT");
          exit(SIGINT);
       }
-
-
+   if(sigset(30, team_one_changer) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   if(sigset(31, team_two_changer) == -1){  /* set the signal catcher for signal 3 */
+         perror("Sigset can not set SIGQUIT");
+         exit(SIGINT);
+      }
+   // rounds = toint(argv[0]);
 
    glutInit(&argc, argv);
    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
@@ -194,69 +206,91 @@ void signal_catcher_team_two_speed_8(int sig){
 void signal_catcher_team_two_speed_9(int sig){
    team_two_speed_maker(0.09);
 }
+void team_one_changer(int sig){
+   if (team_one_player == 5){
+      team_one_player = 1;
+   }
+   else{
+      team_one_player++;
+   }
+}
+void team_two_changer(int sig){
+   if (team_two_player == 5){
+      team_two_player = 1;
+   }
+   else{
+      team_two_player++;
+   }
+}
+
 void team_one_speed_maker(double speed){
    if(team_one_player == 1){
-      team_one_player_one_x += speed;
-      if (team_one_player_one_x >= -0.75){
-         team_one_player = 2;
-      }
+      if (team_one_player_one_x < -0.75){
+         team_one_player_one_x += speed;      
+         }
    }
    else if(team_one_player == 2){
+      if(team_one_player_two_x < -0.25){
       team_one_player_two_x += speed;
-      if(team_one_player_two_x >= -0.25){
-         team_one_player = 3;
+
       }
    }
    else if(team_one_player == 3){
+      if(team_one_player_three_x < 0.25){
       team_one_player_three_x += speed;
-      if(team_one_player_three_x >= 0.25){
-         team_one_player = 4;
       }
    }
    else if(team_one_player == 4){
-      team_one_player_four_x += speed;
-      if(team_one_player_four_x >= 0.75){
-         team_one_player = 5;
+      if(team_one_player_four_x < 0.75){
+         team_one_player_four_x += speed;
+
       }
    }
    else if(team_one_player == 5){
-      team_one_player_five_x += speed;
-      if(team_one_player_five_x >= 1.25){
+      rounds -= 1;
+      if(team_one_player_five_x < 1.25){
+         team_one_player_five_x += speed;
+
+      }
+      else{
          reset_players();
       }
 }
+
 }
 void team_two_speed_maker(double speed){
    if(team_two_player == 1){
-      team_two_player_one_x += speed;
-      if (team_two_player_one_x >= -0.75){
-         team_two_player = 2;
-      }
+      if (team_two_player_one_x < -0.75){
+         team_two_player_one_x += speed;      }
    }
    else if(team_two_player == 2){
+      if(team_two_player_two_x < -0.25){
       team_two_player_two_x += speed;
-      if(team_two_player_two_x >= -0.25){
-         team_two_player = 3;
+
       }
    }
    else if(team_two_player == 3){
+      if(team_two_player_three_x < 0.25){
       team_two_player_three_x += speed;
-      if(team_two_player_three_x >= 0.25){
-         team_two_player = 4;
       }
    }
    else if(team_two_player == 4){
-      team_two_player_four_x += speed;
-      if(team_two_player_four_x >= 0.75){
-         team_two_player = 5;
+      if(team_two_player_four_x < 0.75){
+         team_two_player_four_x += speed;
+
       }
    }
    else if(team_two_player == 5){
-      team_two_player_five_x += speed;
-      if(team_two_player_five_x >= 1.25){
+      rounds -= 1;
+      if(team_two_player_five_x < 1.25){
+         team_two_player_five_x += speed;
+
+      }
+      else{
          reset_players();
       }
-   }
+}
+
 }
 
 void reset_players(){
@@ -271,6 +305,7 @@ void reset_players(){
    team_two_player_three_x= -0.25;
    team_two_player_four_x= 0.25;
    team_two_player_five_x= 0.75;
+   team_two_player = 1;
 }   
 
 
@@ -344,4 +379,17 @@ void team_two_player_five(void){
    glBegin(GL_POINTS);
    glVertex2f(team_two_player_five_x, team_two_player_five_y); //top
    glEnd();
+}
+
+
+int toint(char str[])
+{
+    int len = strlen(str);
+    int i, num = 0;
+    for (i = 0; i < len; i++)
+    {
+        num = num + ((str[len - (i + 1)] - '0') * pow(10, i));
+    }
+
+    return num;
 }

@@ -10,7 +10,7 @@
 #include <string.h>  
 #include <ctype.h>
 
-#define  numOfPlayers  100           /* defult value of the number of players */
+#define  numOfPlayers  10           /* defult value of the number of players */
 #define  NUM_OF_TEAMS  2              /* defult value of the number of teams */
 
 int points [NUM_OF_TEAMS];            /* array of the points of the teams */
@@ -23,6 +23,7 @@ int teamTwoRounds = 0;                /* counter of the rounds of team 2 */
 int rounds = 5;                       /* counter of the rounds */
 int winning_flag = 0 ;                /* flag of the winning team */
 int flag = 1;
+int g_draw_pid = 0;                     /* pid of the drawer process */
 void terminate_all();                 /* function to terminate all the players */
 void players_ready();                 /* function to handle the ready signal */
 void response_received(int);          /* function to handle the response signal from team 1 */
@@ -35,7 +36,20 @@ int main()
 {
   int i;
   char s[80];
-
+  int drawer_pid = fork();                            /* create a child process */           /* convert the pid to string */
+  char str[10];
+  tostring(str, drawer_pid);
+  printf("%s",str);
+  if (drawer_pid == -1) {                             /* case 0: failure to create child */
+    printf("fork failure ... getting out\n");
+    exit (-1);
+  }
+  if ( drawer_pid == 0 ) {                            /* case 1: childe process */
+    execlp("./point", "point", (char *) NULL);     /* execute the child file with the argument drawer */
+    perror("exec failure ");                         /* this when there is an exec failure : No such file or directory */
+    while(1); 
+  }
+  g_draw_pid = drawer_pid;
   /* ask the user for the number of rounds */
   printf("Press Enter to continue with the defult value for rounds / Enter any positive intger to set number of rounds: ");
   fgets(s, sizeof s, stdin);
@@ -89,9 +103,9 @@ int main()
     if ( pid == 0 ) { 
       
       if(i%2 == 0 )
-      execlp("./child", "team1", (char *) NULL);   /* execute the child file with the argument team1 */
+      execlp("./child", str,"team1", (char *) NULL);   /* execute the child file with the argument team1 */
       else
-      execlp("./child", "team2", (char *) NULL);  /* execute the child file with the argument team2 */
+      execlp("./child", str,"team2", (char *) NULL);  /* execute the child file with the argument team2 */
       perror("exec failure ");                    /* this when there is an exec failure : No such file or directory */
       while(1); 
     }
@@ -206,19 +220,33 @@ void terminate_all(){
   for(int i = 0 ; i < numOfPlayers ; i++){
     kill(players[i], 9);
   }
+  kill(g_draw_pid,9);
   exit(10);
 }
 
+// function that converts integer to string
 
 
 
 
-
-
-
-
-
-
+void tostring(char str[], int num)
+{
+    int i, rem, len = 0, n;
+ 
+    n = num;
+    while (n != 0)
+    {
+        len++;
+        n /= 10;
+    }
+    for (i = 0; i < len; i++)
+    {
+        rem = num % 10;
+        num = num / 10;
+        str[len - (i + 1)] = rem + '0';
+    }
+    str[len] = '\0';
+}
 
 
 
