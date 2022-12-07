@@ -232,7 +232,6 @@ void terminate_all(){
 void tostring(char str[], int num)
 {
     int i, rem, len = 0, n;
- 
     n = num;
     while (n != 0)
     {

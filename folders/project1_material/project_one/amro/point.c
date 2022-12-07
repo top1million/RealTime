@@ -386,14 +386,12 @@ void team_two_player_five(void){
 }
 
 
-int toint(char str[])
-{
-    int len = strlen(str);
-    int i, num = 0;
-    for (i = 0; i < len; i++)
-    {
-        num = num + ((str[len - (i + 1)] - '0') * pow(10, i));
-    }
-
-    return num;
+int toint(char str[]){
+   int len = strlen(str);
+   int i, num = 0;
+   for (i = 0; i < len; i++)
+   {
+      num = num + ((str[len - (i + 1)] - '0') * pow(10, i));
+   }
+   return num;
 }
