@@ -224,6 +224,9 @@ void team_two_changer(int sig){
 }
 
 void team_one_speed_maker(double speed){
+   if (team_one_player_five_x > 1.25){
+      reset_players();
+   }
    if(team_one_player == 1){
       if (team_one_player_one_x < -0.75){
          team_one_player_one_x += speed;      
@@ -252,13 +255,14 @@ void team_one_speed_maker(double speed){
          team_one_player_five_x += speed;
 
       }
-      else{
-         reset_players();
-      }
+
 }
 
 }
 void team_two_speed_maker(double speed){
+   if (team_two_player_five_x > 1.25){
+      reset_players();
+   }
    if(team_two_player == 1){
       if (team_two_player_one_x < -0.75){
          team_two_player_one_x += speed;      }
@@ -310,7 +314,7 @@ void reset_players(){
 
 
 
-void team_one_player_one(int x,int y){
+void team_one_player_one(void){
    glPointSize(20);
    glColor3f (1.0, 0.0, 0.0);
    glBegin(GL_POINTS);
