@@ -1,0 +1,16 @@
+
+
+Dear Students,
+
+Below is the site I promissed to send you a while ago and that relates to multi-processing + sockets + multi-threading.
+
+The link is:
+
+http://www.cs.cf.ac.uk/Dave/C/
+
+
+It has useful information regarding C programming in general. In addition, Interprocess communication techniques (pipes, fifos, semaphores, message queues, shared memory, sockets, pthreads, etc) are discussed in details.
+
+Have fun :-)
+Hanna.
+

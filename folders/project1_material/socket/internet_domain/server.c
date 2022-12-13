@@ -13,9 +13,9 @@ main(void)
     exit(1);
   }
   
-  memset(&serv_adr, 0, sizeof(serv_adr));
-  serv_adr.sin_family      = AF_INET;
-  serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
+  memset(&serv_adr, 0, sizeof(serv_adr));     // clear serv address buffer
+  serv_adr.sin_family      = AF_INET;               //its family name
+  serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);     // accept connection from any ip address
   serv_adr.sin_port        = htons(PORT);
 
   if ( bind(orig_sock, (struct sockaddr *) &serv_adr,
