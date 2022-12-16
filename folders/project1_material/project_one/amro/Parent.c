@@ -34,102 +34,112 @@ void announce_winner();               /* function to announce the winner */
 
 int main()
 {
-  int i;
-  char s[80];
-  int drawer_pid = fork();                            /* create a child process */           /* convert the pid to string */
-  char str[10];
-  tostring(str, drawer_pid);
-  printf("%s",str);
-  if (drawer_pid == -1) {                             /* case 0: failure to create child */
-    printf("fork failure ... getting out\n");
-    exit (-1);
-  }
-  if ( drawer_pid == 0 ) {                            /* case 1: childe process */
-    execlp("./point", "point", (char *) NULL);     /* execute the child file with the argument drawer */
-    perror("exec failure ");                         /* this when there is an exec failure : No such file or directory */
-    while(1); 
-  }
-  g_draw_pid = drawer_pid;
-  /* ask the user for the number of rounds */
-  printf("Press Enter to continue with the defult value for rounds / Enter any positive intger to set number of rounds: ");
-  fgets(s, sizeof s, stdin);
-
-  if(s[0] == '\n') 
+  double probability_array[1000];
+  
+  for(int i = 0; i < 1000 ; i++)
   {
-    printf("line is empty, the defult value ( %d ) for rounds will be used\n", rounds);
+    probability_array[i] = (999-i)/10.0;
   }
-  else
+  for (int i = 0; i < 1000; i++)
   {
-    if (atoi(s) == 0 ) 
-    {
-      printf("line is unvalid, the defult value ( %d ) for rounds will be used\n", rounds);
-    }
-    else
-    { 
-      rounds = atoi(s);
-      printf("the new value ( %d ) for rounds will be used\n", rounds);  
-    }
+    printf("****%0.1f***",probability_array[i]);
   }
+//   int i;
+//   char s[80];
+//   int drawer_pid = fork();                            /* create a child process */           /* convert the pid to string */
+//   char str[10];
+//   tostring(str, drawer_pid);
+//   printf("%s",str);
+//   if (drawer_pid == -1) {                             /* case 0: failure to create child */
+//     printf("fork failure ... getting out\n");
+//     exit (-1);
+//   }
+//   if ( drawer_pid == 0 ) {                            /* case 1: childe process */
+//     execlp("./point", "point", (char *) NULL);     /* execute the child file with the argument drawer */
+//     perror("exec failure ");                         /* this when there is an exec failure : No such file or directory */
+//     while(1); 
+//   }
+//   g_draw_pid = drawer_pid;
+//   /* ask the user for the number of rounds */
+//   printf("Press Enter to continue with the defult value for rounds / Enter any positive intger to set number of rounds: ");
+//   fgets(s, sizeof s, stdin);
 
-/* ****************************************************************************************************************************/
+//   if(s[0] == '\n') 
+//   {
+//     printf("line is empty, the defult value ( %d ) for rounds will be used\n", rounds);
+//   }
+//   else
+//   {
+//     if (atoi(s) == 0 ) 
+//     {
+//       printf("line is unvalid, the defult value ( %d ) for rounds will be used\n", rounds);
+//     }
+//     else
+//     { 
+//       rounds = atoi(s);
+//       printf("the new value ( %d ) for rounds will be used\n", rounds);  
+//     }
+//   }
 
-  printf("My process ID is %d\n", getpid());
-  printf("Children IDs:\n");
+// /* ****************************************************************************************************************************/
 
-  if (sigset(10,signal_catcher_ready_state)==-1){
-    perror("Sigset can not set SIGUSR1");
-    exit(SIGINT);
-  }
-  if (sigset(12, response_received) == -1) {           /* set the signal catcher for the response signal from team 1 */
-    perror("Sigset can not set SIGUSR2");
-    exit(SIGINT);
-  }
-    if (sigset(13, response_received2) == -1) {        /* set the signal catcher for the response signal from team 2 */
-    perror("Sigset can not set SIGPIPE");
-    exit(SIGINT);
-  }
+//   printf("My process ID is %d\n", getpid());
+//   printf("Children IDs:\n");
 
-  for ( i = 0; i < numOfPlayers; i++ ) 
-  {
-    flag = 1 ;
-    pid = fork();                                   /* create a child process */
+//   if (sigset(10,signal_catcher_ready_state)==-1){
+//     perror("Sigset can not set SIGUSR1");
+//     exit(SIGINT);
+//   }
+//   if (sigset(12, response_received) == -1) {           /* set the signal catcher for the response signal from team 1 */
+//     perror("Sigset can not set SIGUSR2");
+//     exit(SIGINT);
+//   }
+//     if (sigset(13, response_received2) == -1) {        /* set the signal catcher for the response signal from team 2 */
+//     perror("Sigset can not set SIGPIPE");
+//     exit(SIGINT);
+//   }
 
-    // case 0: failure to create child
-    if (pid == -1) { 
-      printf("fork failure ... getting out\n");
-      exit (-1);
-    }
-    // case 1: childe process 
-    if ( pid == 0 ) { 
+//   for ( i = 0; i < numOfPlayers; i++ ) 
+//   {
+//     flag = 1 ;
+//     pid = fork();                                   /* create a child process */
+
+//     // case 0: failure to create child
+//     if (pid == -1) { 
+//       printf("fork failure ... getting out\n");
+//       exit (-1);
+//     }
+//     // case 1: childe process 
+//     if ( pid == 0 ) { 
       
-      if(i%2 == 0 )
-      execlp("./child", str,"team1", (char *) NULL);   /* execute the child file with the argument team1 */
-      else
-      execlp("./child", str,"team2", (char *) NULL);  /* execute the child file with the argument team2 */
-      perror("exec failure ");                    /* this when there is an exec failure : No such file or directory */
-      while(1); 
-    }
-    // case 2: parent process
-    else
-      players[i] = pid;                         // saves the id of my child
-      printf("%d, ", players[i]); 
-    while(flag == 1);
-  }
+//       if(i%2 == 0 )
+//       execlp("./child", str,"team1", (char *) NULL);   /* execute the child file with the argument team1 */
+//       else
+//       execlp("./child", str,"team2", (char *) NULL);  /* execute the child file with the argument team2 */
+//       perror("exec failure ");                    /* this when there is an exec failure : No such file or directory */
+//       while(1); 
+//     }
+//     // case 2: parent process
+//     else
+//       players[i] = pid;                         // saves the id of my child
+//       printf("%d, ", players[i]); 
+//     while(flag == 1);
+//   }
 
-  while(1){ 
-  if (ready_counter == numOfPlayers ){         /* if all the players are ready */
-    printf("\n>> All players are ready \n>> Sending starting signal to  players to start \n");
-    for(int i = 0 ; i < 2 ; i ++){
-      printf(">> Sending signal to player %d from team %d\n", players[i],i%2 + 1); 
-      kill(players[i], 3);                   /* send the start signal to the players */
-    }
-    printf("\n");
-    break;
-  }
-  }
+//   while(1){ 
+//   if (ready_counter == numOfPlayers ){         /* if all the players are ready */
+//     printf("\n>> All players are ready \n>> Sending starting signal to  players to start \n");
+//     for(int i = 0 ; i < 2 ; i ++){
+//       printf(">> Sending signal to player %d from team %d\n", players[i],i%2 + 1); 
+//       kill(players[i], 3);                   /* send the start signal to the players */
+//     }
+//     printf("\n");
+//     break;
+//   }
+//   }
 
-  while(1);
-  return(0);
+//   while(1);
+//   return(0);
 }
 
 void signal_catcher_ready_state(int signum){
