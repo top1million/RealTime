@@ -7,9 +7,9 @@
 #include <string.h>
 int INT_MIN = -2147483648;
 typedef struct Queue{
-  int front;
-  int rear;
-  int array[25];
+    int front;
+    int rear;
+    int array[25];
 } Queue;
 
 Queue* createQueue(){
