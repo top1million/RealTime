@@ -1,0 +1,13 @@
+Abdallah Afifi 1182972:
+the system will depend on reading analogue values, this means we will use PORTA.
+we will input readings, read them one by one and store them into variables. 
+THE AVERAGE IS SELF CALCULATED AS ALL HAVE THE SAME REFERENCE POINT
+the buzzer will be connected to RB0
+the LEDS will be connected in port C
+we can compare the bits to see if the temp reached above 4.2V which will be to mapped accordingly using assembly in pic16f877a. there was an example given to us on reading the voltage difference. this is the same concept but instead of voltage we show temp.
+the values can be mapped accordingly as the range can be from 100-1000 for example and thus we can see below and above the range.
+if it went below 100 we turn on the buzzer and above 1000 we turn it on, otherwise it turns off
+the leds can show temp from in the range, so they will not be read in binary, but they need t be mapped once read. so when the LSB led is only on then that means we are at -5, when all of them except LSB LED are on then we are at 40 (incrementing linearly) and otherwise it is out of range and buzzer is on
+there are 6 leds as they can cover the range they will be connected on RC2-7
+VREF = RA3
+LEFT JUSTIFIED INPUT SO inaccuracy of 3 (first 2 bits are always lost);

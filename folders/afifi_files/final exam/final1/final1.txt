@@ -1,0 +1,17 @@
+Abdallah Afifi 1182972
+there will be a struct cat, and people. cats have the information : 
+    int id: auto incremented to not cause troubles, bool is_available to know if it was caught already or not,int[2] location (having the x and y axis locations), int color with white=0,dark grey=1,light grey = 2,brown = 3,black = 4 (enum)
+Player struct: int id (auto incremented so we can't have 2 with the same id),int[2] location for (x,y) coordinates, int score (starting with 100) int[5] cat_remaining which shows which cat he should catch, int current_cat to show which cat to catch first and increments once they catch the correct kitten,
+Playground struct: int current_number_of_players to know how many players we have now,int players_ids[5] can handle up to 5 persons on it at the same time since there are only five players, otherwise it is -1. int cat_id: can allow up to 1 cat at the location since the rules don't indicate, otherwise it is -1. 
+
+the playground will be a shared memory with an array of Playground struct.
+each kitten will be an item in the shared memory. since they are fixed then there is no need to add processing powers to them as it depends on the players who will take them or put them back 
+when accessing a kitten we take a semaphore for that kitten. 
+the referee which is a seperate thread than the 5 players which are also threads, will keep checking each time unit on all of the locations, since players can only move every time unit which is incremented once the referee checks to see that all the locations are not crowded with 2 or more people.
+when there are 2 or more people on the same spot, they will receive a message using a message queue with their ID, which players who took the kitten or not keep checking. 
+the players know that the time unit ended once they get a message in the message queue. if the message is < 0 then whoever took a cat must return it, and if it was >0 then they can add to their score. 
+If the player who caught the cat found that it wasn't in the order then he automatically decrements and returns the cat(after receiving the message). The referee checks the colour and the order of the cats that player has and sends the message accordingly. the players are all global variables so we can know what each person has and can access all his information
+the semaphore for the can isn't released until the message from the message queue is received, so before that its' state can be changed accordingly.
+checking to see if there is a cat is done by checking the cat id value in that square.
+
+ALTERNATIVE IDEA: We can instead make each person send to the using a message queue, and each time the referee compares their locations and sees the value of the cat there, this way there will be no need for a semaphore for the cats as only the referee can access them and there is only 1 referee

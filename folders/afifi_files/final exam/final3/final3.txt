@@ -1,0 +1,6 @@
+abdallah afifi 1182972
+
+the same as in final2.txt so please refer to it.
+there will be similar connection to the buzzer, instead of leds there will be LCD connected to PORTD 
+the button will be on port b0 and the buzzer will be on port C0 instead of port b this time.
+the results will be displayed accordingly.

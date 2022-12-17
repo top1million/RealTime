@@ -1,0 +1,67 @@
+MPLINK 4.48, Linker
+Linker Map File - Created Sat Feb 26 15:13:10 2022
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000006
+                   .org_1       code   0x000004    program   0x000058
+                   .cinit    romdata   0x000030    program   0x000004
+                      PGM       code   0x000032    program   0x000082
+.config_2007_FINAL_EXAM.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x000072      
+                            0x002007    0x002007      
+            115 out of 8454 program addresses used, program memory utilization is 1%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    ADDIT   0x000039    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     CONT   0x00003b    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    DELAY   0x000046    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+           DelayOneSecond   0x00004b    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     Loop   0x000033    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                 PAUSEISR   0x000065    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                  PAUSEIT   0x000049    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                   PB0INT   0x000008    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     RETP   0x000071    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     RETS   0x000063    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     STEP   0x000036    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                  STEPISR   0x00005a    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    Start   0x000032    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     init   0x00000a    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    loop2   0x000053    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    reset   0x00002e    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   PB0INT   0x000008    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     init   0x00000a    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    reset   0x00002e    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    Start   0x000032    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     Loop   0x000033    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     STEP   0x000036    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    ADDIT   0x000039    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     CONT   0x00003b    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    DELAY   0x000046    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                  PAUSEIT   0x000049    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+           DelayOneSecond   0x00004b    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                    loop2   0x000053    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                  STEPISR   0x00005a    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     RETS   0x000063    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                 PAUSEISR   0x000065    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+                     RETP   0x000071    program     static C:\Users\abdal\Desktop\final exam\final_exam.asm
+
+

@@ -30,8 +30,7 @@ main(int argc, char *argv[])
    * Access, attach and reference the shared memory
    */
   if ( (shmid = shmget((int) ppid, 0, 0)) != -1 ) {
-    if ( (shmptr = (char *) shmat(shmid, (char *)0, 0)) 
-	 == (char *) -1 ) {
+    if ( (shmptr = (char *) shmat(shmid, (char *)0, 0)) == (char *) -1 ) {
       perror("shmat -- producer -- attach");
       exit(1);
     }
