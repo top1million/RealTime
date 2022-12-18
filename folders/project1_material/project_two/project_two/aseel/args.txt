@@ -1,6 +1,6 @@
-number_of_people  200
-number_of_males 150
-number_of_femals 50
+number_of_people  10
+number_of_males 5
+number_of_femals 5
 number_of_unserved_people 70
 queue_threshold 25
 time_inside_the_detector 5

@@ -4,15 +4,15 @@
 #include "local.h"
 #define  num_of_customers  20
 void signal_catcher_ready_state(int); /* function to handle the ready signal */
-int pick_random_customer(float[num_of_customers][2],float);
-id_t pid, players[num_of_customers] ;     /* array of the players pids */
+int pick_random_customer(float[number_of_people][2],float);
+id_t pid, players[number_of_people] ;     /* array of the players pids */
 int ready_counter = 0;                /* counter of the ready customers */
 int flag = 1;
 int g_draw_pid;
 
 main(int argc, char *argv[])
 {
-  float customers_probablity[num_of_customers][2] ;
+  float customers_probablity[number_of_people][2] ;
   sem_init(&semEmpty, 1, 4);
   sem_init(&semFull, 1, 0);
   static struct  MEMORY memory;
@@ -62,7 +62,7 @@ main(int argc, char *argv[])
   printf("My process ID is %d\n", getpid());
   printf("Children IDs:\n");
 
-  for (int i = 0; i < num_of_customers; i++ ) 
+  for (int i = 0; i < number_of_people; i++ ) 
   {
     flag = 1 ;
     pid = fork();                                   /* create a child process */
@@ -91,9 +91,9 @@ main(int argc, char *argv[])
   int test = 1;
   while(1){ 
     
-  if (ready_counter == num_of_customers ){         /* if all the customers are ready */
-    for(int i = 0 ; i < num_of_customers ; i++){
-      float probablity = (num_of_customers - i) / (float)num_of_customers;
+  if (ready_counter == number_of_people ){         /* if all the customers are ready */
+    for(int i = 0 ; i < number_of_people ; i++){
+      float probablity = (number_of_people - i) / (float)number_of_people;
       customers_probablity[i][1] = probablity;
       customers_probablity[i][0] = players[i];
     }
@@ -121,12 +121,12 @@ void signal_catcher_ready_state(int signum){
   ready_counter++;
 }
 
-int pick_random_customer(float customers_probablity[num_of_customers][2],float random){
+int pick_random_customer(float customers_probablity[number_of_people][2],float random){
   // Generate a random number between 0 and 1
   // Loop through the elements in the array
   
   float sum = 0;
-  for (int i = 0; i < num_of_customers; i++) {
+  for (int i = 0; i < number_of_people; i++) {
     
       // Check if the random number is within the probability range of this element
       sum += customers_probablity[i][1];
