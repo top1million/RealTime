@@ -4,9 +4,10 @@
 #include "local.h"
 OIM *oim;
 Queue *mq;
-Queue *female_queue;
+Queue *fq;
 int genderFlag;
 void join_the_queue(int sig);
+int shit = 0;
 main(int argc, char *argv[])
 {
     int semid, shmid;
@@ -65,11 +66,23 @@ main(int argc, char *argv[])
 }
 void join_the_queue(int sig)
 {
-    mq = &oim->male_queue;
-    enqueue(mq, getpid());
-    printf("shitt");
-    show(mq);
-
+    if (shit == 0)
+    {
+        if (genderFlag == 1)
+        {
+            mq = &oim->male_queue;
+            enqueue(mq, getpid());
+            show(mq);
+            shit++;
+        }
+        else
+        {
+            fq = &oim->female_queue;
+            enqueue(fq, getpid());
+            show(fq);
+            shit++;
+        }
+    }
 }
 
 int toint(char str[])

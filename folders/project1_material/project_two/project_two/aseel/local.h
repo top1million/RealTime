@@ -109,7 +109,6 @@ void show(Queue *queue)
         printf("Empty Queue \n");
     else
     {
-        printf("Queue: \n");
         for (int i = queue->front; i <= queue->rear; i++)
             printf("%d ", queue->array[i]);
         printf("\n");
