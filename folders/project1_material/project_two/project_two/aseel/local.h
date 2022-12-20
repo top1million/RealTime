@@ -31,7 +31,7 @@ int number_of_satisfied_people;
 int gate_openning_time; 
 
 
-#define N_SLOTS   1 // ! 1 slot for the queue ( not sure if it is correct )
+#define N_SLOTS   2 // ! 1 slot for the queue ( not sure if it is correct )
 
 /* This declaration is *MISSING* is many solaris environments.
    It should be in the <sys/sem.h> file but often is not! If 
