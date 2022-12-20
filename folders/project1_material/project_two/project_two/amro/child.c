@@ -1,9 +1,7 @@
 #include "local.h"
 
 int genderFlag=0;
-int g_drawer_pid = 0;
 void join_the_queue(int);
-void round_reset_func(int);
 
 int main(int argc, char *argv[])
 {

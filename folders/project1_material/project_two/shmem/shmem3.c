@@ -13,12 +13,7 @@ typedef struct Queue
     int array[25];
 } Queue;
 
-Queue *createQueue()
-{
-    Queue *queue = (Queue *)malloc(sizeof(Queue));
-    queue->front = queue->rear = -1;
-    return queue;
-}
+
 void enqueue(Queue *queue, int item)
 {
     if (queue->rear == 24)

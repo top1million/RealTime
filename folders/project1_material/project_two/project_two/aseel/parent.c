@@ -32,7 +32,7 @@ int validate_values(int number_of_people, int number_of_females, int number_of_m
 
 void main(int argc, char *argv[])
 {
-  static struct OIM oim;
+  OIM *oim;
   static ushort start_val[2] = {N_SLOTS, 0};
   int semid, shmid;
   char *shmptr;
@@ -154,50 +154,49 @@ void main(int argc, char *argv[])
     while (flag == 1)
       ;
   }
-
+  printf("shit?");
   /*
    * Fork the producer process
    */
-  if ((p_id = fork()) == -1)
-  {
-    perror("problem with fork the producer");
-    exit(5);
-  }
-  else if (p_id == 0)
-  {
-    execl("./producer", "./producer", (char *)0); // create  the first child process
-    perror("problem in execl-->  producer\n");
-    exit(6);
-  }
+  // if ((p_id = fork()) == -1)
+  // {
+  //   perror("problem with fork the producer");
+  //   exit(5);
+  // }
+  // else if (p_id == 0)
+  // {
+  //   execl("./producer", "./producer", (char *)0); // create  the first child process
+  //   perror("problem in execl-->  producer\n");
+  //   exit(6);
+  // }
 
-  int test = 1;
-  while (1)
-  {
+  // int test = 1;
+  // while (1)
+  // {
 
-    if (ready_counter == number_of_people)
-    { /* if all the customers are ready */
-      for (int i = 0; i < number_of_people; i++)
-      {
-        float probablity = (number_of_people - i) / (float)number_of_people;
-        customers_probablity[i][1] = probablity;
-        customers_probablity[i][0] = players[i];
-      }
-      test = 0;
-      srand(customers_probablity[0][0]);
-      int m = 0;
-      while (m != 10)
-      {
-        float random = (double)rand() / RAND_MAX;
-        int x = pick_random_customer(customers_probablity, random);
-        kill(x, 15);
-        m++;
-      }
+  //   if (ready_counter == number_of_people)
+  //   { /* if all the customers are ready */
+  //     for (int i = 0; i < number_of_people; i++)
+  //     {
+  //       float probablity = (number_of_people - i) / (float)number_of_people;
+  //       customers_probablity[i][1] = probablity;
+  //       customers_probablity[i][0] = players[i];
+  //     }
+  //     test = 0;
+  //     srand(customers_probablity[0][0]);
+  //     int m = 0;
+  //     while (m != 10)
+  //     {
+  //       float random = (double)rand() / RAND_MAX;
+  //       int x = pick_random_customer(customers_probablity, random);
+  //       kill(x, 15);
+  //       m++;
+  //     }
 
-      break;
-    }
-  }
-  while (1)
-    ;
+  //     break;
+  //   }
+  // }
+  while (1);
 
   /*
    * Detach and remove the memory segment
@@ -207,7 +206,6 @@ void main(int argc, char *argv[])
   semctl(semid, 0, IPC_RMID, 0);
 
   return 0;
-  exit(0);
 }
 
 /*

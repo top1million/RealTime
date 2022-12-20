@@ -9,7 +9,7 @@ main(int argc, char *argv[])
     int semid, shmid;
     pid_t ppid = getppid();
     char *shmptr;
-    struct Queue *queptr;
+    static struct OIM oim;
 
     /*
      * Access, attach and reference the shared memory
@@ -17,19 +17,18 @@ main(int argc, char *argv[])
      */
     if ((shmid = shmget((int)ppid, 0, 0)) != -1)
     { // they are connected to the memory using the ppide ( they depend on the parent process id)
-        if ((shmptr = (char *)shmat(shmid, (char *)0, 0)) == (char *)-1)
+        if ((oim = shmat(shmid, 0, 0)) == (char *)-1)
         {
-            perror("shmat -- producer -- attach");
+            perror("problem with shmat");
             exit(1);
         }
-        queptr = (struct Queue *)shmptr; // formating the memory
     }
     else
     {
         perror("shmget -- producer -- access");
         exit(2);
     }
-
+    
     /*
      ! Access the semaphore set
      */
