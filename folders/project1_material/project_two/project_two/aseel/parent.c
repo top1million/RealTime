@@ -32,7 +32,7 @@ int validate_values(int number_of_people, int number_of_females, int number_of_m
 
 void main(int argc, char *argv[])
 {
-  static struct Queue queue;
+  static struct OIM oim;
   static ushort start_val[2] = {N_SLOTS, 0};
   int semid, shmid;
   char *shmptr;
@@ -80,22 +80,21 @@ void main(int argc, char *argv[])
    * Create, attach and initialize the memory segment
    */
 
-  if ((shmid = shmget((int)pid, sizeof(queue) * 2, IPC_CREAT | 0600)) != -1)
-  { // sizeof(memory) = 216 bytes
+    if ((shmid = shmget((int)pid, sizeof(oim) * 2, IPC_CREAT | 0666)) != -1)
+    { // size of the shared memory is the size of the struct which
 
-    if ((shmptr = (char *)shmat(shmid, 0, 0)) == (char *)-1)
-    {
-      perror("problem with shmat");
-      exit(1);
+        if ((oim = shmat(shmid, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
     }
-    memcpy(shmptr, (char *)&queue, sizeof(queue)); // this is how we formate the memory
-  }
 
-  else
-  {
-    perror("problem with shmget");
-    exit(2);
-  }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
 
   /*
    * Create and initialize the semaphores
@@ -196,7 +195,8 @@ void main(int argc, char *argv[])
       break;
     }
   }
-  while (1);
+  while (1)
+    ;
 
   /*
    * Detach and remove the memory segment
