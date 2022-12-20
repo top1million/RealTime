@@ -1,7 +1,7 @@
-number_of_people  10
-number_of_males 5
-number_of_femals 5
-number_of_unserved_people 7
+number_of_people  5
+number_of_males 2
+number_of_femals 2
+number_of_unserved_people 2
 queue_threshold 25
 time_inside_the_detector_m 5
 time_inside_the_detector_f 10

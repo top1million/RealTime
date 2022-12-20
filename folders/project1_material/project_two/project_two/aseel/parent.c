@@ -360,25 +360,25 @@ int splitting(char *line, char *delim)
 
 int validate_values(int number_of_people, int number_of_females, int number_of_males, int number_of_unserved_people, int number_of_tellers, int number_of_unhappy_people, int number_of_satisfied_people)
 {
-  if (number_of_people < number_of_females + number_of_males || number_of_people > number_of_females + number_of_males)
-  {
-    printf("Unvalid numbers of people\n");
-    return 0;
-  }
-  if (number_of_unserved_people > number_of_people || number_of_satisfied_people > number_of_people || number_of_unhappy_people > number_of_people)
-  {
-    printf("Unvalid numbers of unserved people or unhappy people or satisfied people\n");
-    return 0;
-  }
-  if (number_of_tellers < 1 || number_of_tellers > 10)
-  {
-    printf("Unvalid numbers of tellers\n");
-    return 0;
-  }
-  if (number_of_people < number_of_unserved_people + number_of_satisfied_people + number_of_unhappy_people)
-  {
-    printf("Unvalid numbers of people\n");
-    return 0;
-  }
+  // if (number_of_people < number_of_females + number_of_males || number_of_people > number_of_females + number_of_males)
+  // {
+  //   printf("Unvalid numbers of people\n");
+  //   return 0;
+  // }
+  // if (number_of_unserved_people > number_of_people || number_of_satisfied_people > number_of_people || number_of_unhappy_people > number_of_people)
+  // {
+  //   printf("Unvalid numbers of unserved people or unhappy people or satisfied people\n");
+  //   return 0;
+  // }
+  // if (number_of_tellers < 1 || number_of_tellers > 10)
+  // {
+  //   printf("Unvalid numbers of tellers\n");
+  //   return 0;
+  // }
+  // if (number_of_people < number_of_unserved_people + number_of_satisfied_people + number_of_unhappy_people)
+  // {
+  //   printf("Unvalid numbers of people\n");
+  //   return 0;
+  // }
   return 1;
 }

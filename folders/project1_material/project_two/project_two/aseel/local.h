@@ -61,8 +61,8 @@ typedef struct OIM
   int t_r;
   int t_i;
   int t_t;
-  Queue *male_queue;
-  Queue *female_queue;
+  Queue male_queue;
+  Queue female_queue;
 } OIM;
 
 struct sembuf acquire = {0, -1, SEM_UNDO},

@@ -3,16 +3,15 @@
  */
 #include "local.h"
 OIM *oim;
-Queue *male_queue;
+Queue *mq;
 Queue *female_queue;
-int genderFlag ;
+int genderFlag;
 void join_the_queue(int sig);
 main(int argc, char *argv[])
 {
     int semid, shmid;
     pid_t ppid = getppid();
     char *shmptr;
-
 
     /*
      * Access, attach and reference the shared memory
@@ -66,19 +65,11 @@ main(int argc, char *argv[])
 }
 void join_the_queue(int sig)
 {
-    printf("shit");
-    if (genderFlag == 1)
-    {
-        enqueue(oim->male_queue,getpid());
-        printf("shitt");
-        show(oim->male_queue);
-    }
-    else
-    {
-        printf("shitt");
-        enqueue(oim->female_queue,getpid());
-        show(oim->female_queue);
-    }
+    mq = &oim->male_queue;
+    enqueue(mq, getpid());
+    printf("shitt");
+    show(mq);
+
 }
 
 int toint(char str[])
