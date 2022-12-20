@@ -21,7 +21,8 @@ int number_of_females;
 int number_of_males;
 int number_of_unserved_people;
 int queue_threshold;
-int time_inside_the_detector;
+int time_inside_the_detector_m;
+int time_inside_the_detector_f;
 int number_of_tellers_B;
 int number_of_tellers_I;
 int number_of_tellers_R;
@@ -30,7 +31,7 @@ int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
 
-#define N_SLOTS 1 // ! 1 slot for the queue ( not sure if it is correct )
+#define N_SLOTS 2 // ! 1 slot for the queue ( not sure if it is correct )
 
 /* This declaration is *MISSING* is many solaris environments.
    It should be in the <sys/sem.h> file but often is not! If
