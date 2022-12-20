@@ -21,7 +21,8 @@ int number_of_females;
 int number_of_males; 
 int number_of_unserved_people; 
 int queue_threshold;
-int time_inside_the_detector;
+int time_inside_the_detector_m;
+int time_inside_the_detector_f;
 int number_of_tellers_B;
 int number_of_tellers_I;
 int number_of_tellers_R;
@@ -49,7 +50,7 @@ typedef struct OIM{
   int t_b; 
   int t_r;
   int t_i;
-  int t_r;
+  int t_t;
   Queue queue[2]; 
 } OIM;
 

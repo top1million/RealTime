@@ -66,7 +66,8 @@ void main(int argc, char *argv[])
     printf("number of tellers I = %d\n", number_of_tellers_I);
     printf("number of tellers T = %d\n", number_of_tellers_T);
     printf("queue threshold = %d\n", queue_threshold);
-    printf("time inside the_detector= %d\n", time_inside_the_detector);
+    printf("time inside the_detector males= %d\n", time_inside_the_detector_m);
+    printf("time inside the_detector females= %d\n", time_inside_the_detector_f);
     printf("gate openning time = %d\n", gate_openning_time);
   }
 
@@ -284,10 +285,15 @@ void reading_file(FILE *fp)
       // Split the line using strtok function
       queue_threshold = splitting(line, delim);
     }
-    if (strstr(line, "time_inside_the_detector") != NULL)
+    if (strstr(line, "time_inside_the_detector_m") != NULL)
     {
       // Split the line using strtok function
-      time_inside_the_detector = splitting(line, delim);
+      time_inside_the_detector_m = splitting(line, delim);
+    }
+    if (strstr(line, "time_inside_the_detector_f") != NULL)
+    {
+      // Split the line using strtok function
+      time_inside_the_detector_f = splitting(line, delim);
     }
     if (strstr(line, "number_of_tellers_B") != NULL)
     {
