@@ -39,6 +39,8 @@ main(int argc, char *argv[])
         perror("problem in semget -->  consumer");
         exit(3);
     }
+
+    
     mq = &oim->male_queue;
     fq = &oim->female_queue;
     srand(getpid());

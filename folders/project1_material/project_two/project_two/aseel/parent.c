@@ -123,20 +123,6 @@ void main(int argc, char *argv[])
   printf("Children IDs:\n");
 
   /*
-   * Fork the producer process
-   */
-  if ((p_id = fork()) == -1)
-  {
-    perror("problem with fork the producer");
-    exit(5);
-  }
-  else if (p_id == 0)
-  {
-    execl("./producer", "./producer", (char *)0); // create  the first child process
-    perror("problem in execl-->  producer\n");
-    exit(6);
-  }
-  /*
    * Create the children processes
    */
 
@@ -172,6 +158,21 @@ void main(int argc, char *argv[])
     while (flag == 1)
       ;
   }
+
+  /*
+   * Fork the producer process
+   */
+  // if ((p_id = fork()) == -1)
+  // {
+  //   perror("problem with fork the producer");
+  //   exit(5);
+  // }
+  // else if (p_id == 0)
+  // {
+  //   execl("./producer", "./producer", (char *)0); // create  the first child process
+  //   perror("problem in execl-->  producer\n");
+  //   exit(6);
+  // }
 
   int test = 1;
   while (1)

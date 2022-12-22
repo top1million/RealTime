@@ -6,11 +6,12 @@ OIM *oim;
 Queue *mq;
 Queue *fq;
 int genderFlag;
+int semid, shmid;
 void join_the_queue(int sig);
 int shit = 0;
 main(int argc, char *argv[])
 {
-    int semid, shmid;
+
     pid_t ppid = getppid();
     char *shmptr;
 
@@ -18,11 +19,13 @@ main(int argc, char *argv[])
      * Access, attach and reference the shared memory
      note: they just access the memory, they did not create any
      */
+
     if (sigset(15, join_the_queue) == -1)
     {
         perror("Sigset can not set SIGUSR1");
         exit(SIGINT);
     }
+
     if ((shmid = shmget((int)ppid, 0, 0)) != -1)
     { // they are connected to the memory using the ppide ( they depend on the parent process id)
         if ((oim = shmat(shmid, 0, 0)) == (char *)-1)
@@ -51,6 +54,7 @@ main(int argc, char *argv[])
         printf("Invalid arguments: %d\n", argc);
         exit(-1);
     }
+
     if (strcmp("male", argv[1]) == 0)
     {
         genderFlag = 1; /* set the team flag to 1 if the player is from team one */
@@ -59,13 +63,25 @@ main(int argc, char *argv[])
     {
         genderFlag = 2; /* set the team flag to 2 if the player is from team two */
     }
+
+
     kill(getppid(), 10); /* send signal 10 to parent to indicate that the child is ready */
-    while (1)
-        ;    /* keep the process running */
+    // while (1)
+        //;    /* keep the process running */
     exit(0); // they are done
 }
+
+
 void join_the_queue(int sig)
 {
+
+    acquire.sem_num = AVAIL_SLOTS; // blcoking the slot for the consumer
+    printf("entered the queue \n");
+
+    if ( semop(semid, &acquire, 1) == -1 ) {
+      perror("semop -- producer -- acquire");
+      exit(4);
+    }
     if (shit == 0)
     {
         if (genderFlag == 1)
@@ -82,6 +98,12 @@ void join_the_queue(int sig)
             show(fq);
             shit++;
         }
+    }
+    release.sem_num = TO_CONSUME; // releasing the slot for the consumer ( this will be released when the n customers full up the queue ) 
+
+    if ( semop(semid, &release, 1) == -1 ) {
+      perror("semop -- producer -- release");
+      exit(5);
     }
 }
 
