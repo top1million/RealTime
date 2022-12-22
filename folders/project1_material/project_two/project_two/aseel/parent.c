@@ -125,17 +125,17 @@ void main(int argc, char *argv[])
   /*
    * Fork the producer process
    */
-  if ((p_id = fork()) == -1)
-  {
-    perror("problem with fork the producer");
-    exit(5);
-  }
-  else if (p_id == 0)
-  {
-    execl("./producer", "./producer", (char *)0); // create  the first child process
-    perror("problem in execl-->  producer\n");
-    exit(6);
-  }
+  // if ((p_id = fork()) == -1)
+  // {
+  //   perror("problem with fork the producer");
+  //   exit(5);
+  // }
+  // else if (p_id == 0)
+  // {
+  //   execl("./producer", "./producer", (char *)0); // create  the first child process
+  //   perror("problem in execl-->  producer\n");
+  //   exit(6);
+  // }
   /*
    * Create the children processes
    */
