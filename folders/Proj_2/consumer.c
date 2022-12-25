@@ -12,8 +12,6 @@ main(int argc, char *argv[])
 {
     int shmid;
     pid_t ppid = getppid();
-    char *shmptr;
-
     /*
      * Access, attach and reference the shared memory
      note: they just access the memory, they did not create any
@@ -69,30 +67,50 @@ main(int argc, char *argv[])
         ;    /* keep the process running */
     exit(0); // they are done
 }
-
+int k = 0;
 void join_the_queue(int sig)
 {
-    
-    if (shit == 0)
+
+    if (k % 2 == 0)
     {
-        if (genderFlag == 1)
+        mq = &oim->male_queue;
+        acquire.sem_num = TO_CONSUME; // blcoking the slot for the producer
+
+        if (semop(semid, &acquire, 1) == -1)
         {
-            mq = &oim->male_queue;
-            enqueue(mq, getpid());
-            printf("female\n");
-            show(mq);
-            shit++;
-         
+            perror("semop -- producer -- acquire");
+            exit(4);
         }
-        else
+        enqueue(mq, getpid());
+        release.sem_num = AVAIL_SLOTS; // releasing the slot for the consumer ( this will be released when the n customers full up the queue )
+
+        if (semop(semid, &release, 1) == -1)
         {
-            fq = &oim->female_queue;
-            enqueue(fq, getpid());
-            printf("male\n");
-            show(fq);
-            shit++;
-           
+            perror("semop -- producer -- release");
+            exit(5);
         }
+        show(mq, 0);
+        k++;
+    }
+    else
+    {
+        fq = &oim->female_queue;
+        acquire.sem_num = TO_CONSUME; // blcoking the slot for the producer
+
+        if (semop(semid, &acquire, 1) == -1)
+        {
+            perror("semop -- producer -- acquire");
+            exit(4);
+        }
+        enqueue(fq, getpid());
+        release.sem_num = AVAIL_SLOTS;
+        if (semop(semid, &release, 1) == -1)
+        {
+            perror("semop -- producer -- release");
+            exit(5);
+        }
+        show(fq, 1);
+        k++;
     }
 }
 

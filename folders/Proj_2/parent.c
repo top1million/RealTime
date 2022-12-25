@@ -14,13 +14,9 @@ id_t pid, players[Max_size]; /* array of the players pids */ // we should make i
 int ready_counter = 0;                                       /* counter of the ready customers */
 int flag = 1;
 int g_draw_pid;
-
+int ggme;
 void signal_catcher_ready_state(int); /* function to handle the ready signal */
 int pick_random_customer(float[number_of_people][2], float);
-// void reading_file(FILE *fp);            // function to read the file
-// int splitting(char *line, char *delim); // function to split the line
-// int validate_values(int number_of_people, int number_of_females, int number_of_males, int number_of_unserved_people,
-//                     int number_of_tellers, int number_of_unhappy_people, int number_of_satisfied_people); // function to validate the values
 void killallhaha(int sig);
 void ignore(int sig);
 int shmid;
@@ -29,9 +25,8 @@ void main(int argc, char *argv[])
 {
   OIM *oim;
   static ushort start_val[2] = {N_SLOTS, 0};
-  pid_t p_id, c_id, pid = getpid();
+  pid_t prodpid, pid = getpid();
   union semun arg;
-  float customers_probablity[number_of_people][2];
   char *str = "sheesh";
   char s[80];
 
@@ -40,6 +35,7 @@ void main(int argc, char *argv[])
    */
 
   reading_file(fp);
+  float customers_probablity[number_of_people][2];
   int val = validate_values(number_of_people, number_of_females, number_of_males, number_of_unserved_people, number_of_tellers_B, number_of_unhappy_people, number_of_satisfied_people);
   if (val == 0)
   {
@@ -125,8 +121,11 @@ void main(int argc, char *argv[])
     // case 1: childe process
     if (pid == 0)
     {
-
-      if (i % 2 == 0)
+      if (i == 0)
+      {
+        execlp("./producer", "shit", "male", (char *)NULL); /* execute the child file with the argument team1 */
+      }
+      if (i % 2 == 0 && i != 0)
         execlp("./consumer", str, "male", (char *)NULL); /* execute the child file with the argument team1 */
       else
         execlp("./consumer", str, "female", (char *)NULL); /* execute the child file with the argument team2 */
@@ -138,26 +137,11 @@ void main(int argc, char *argv[])
     else
     {
       players[i] = pid; // saves the id of my child
-      printf("%d \n ", players[i]);
+      printf("%d    :       %d \n ", i, players[i]);
     }
     while (flag == 1)
       ;
   }
-   /*
-   * Fork the producer process
-   */
-
-  // if ((p_id = fork()) == -1)
-  // {
-  //   perror("problem with fork the producer");
-  //   exit(5);
-  // }
-  // else if (p_id == 0)
-  // {
-  //   execl("./producer", "./producer", (char *)0); // create  the first child process
-  //   perror("problem in execl-->  producer\n");
-  //   exit(6);
-  // }
 
   int test = 1;
   while (1)
@@ -169,16 +153,16 @@ void main(int argc, char *argv[])
       {
         float probablity = (number_of_people - i) / (float)number_of_people;
         customers_probablity[i][1] = probablity;
-        customers_probablity[i][0] = players[i];
+        customers_probablity[i][0] = players[i+1];
       }
       test = 0;
       srand(customers_probablity[0][0]);
       int m = 0;
-      while (m != number_of_people + 1)
+      while (m <= number_of_people )
       {
         float random = (double)rand() / RAND_MAX;
         int x = pick_random_customer(customers_probablity, random);
-        printf("random number x = %d\n", x);
+        acquire.sem_num = AVAIL_SLOTS; // blcoking the slot for the producer
         kill(x, 15);
         m++;
       }
@@ -242,5 +226,5 @@ void killallhaha(int sig)
 
 void ignore(int sig)
 {
-  printf("who sent me this signal!!!!!!!\n");
+  return;
 }

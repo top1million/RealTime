@@ -17,19 +17,15 @@ int g_draw_pid;
 
 void signal_catcher_ready_state(int); /* function to handle the ready signal */
 int pick_random_customer(float[number_of_people][2], float);
-void reading_file(FILE *fp);            // function to read the file
-int splitting(char *line, char *delim); // function to split the line
-int validate_values(int number_of_people, int number_of_females, int number_of_males, int number_of_unserved_people,
-                    int number_of_tellers, int number_of_unhappy_people, int number_of_satisfied_people); // function to validate the values
 void killallhaha(int sig);
 void ignore(int sig);
-int semid, shmid;
+int shmid;
 char *shmptr;
 void main(int argc, char *argv[])
 {
   OIM *oim;
   static ushort start_val[2] = {N_SLOTS, 0};
-  pid_t p_id, c_id, pid = getpid();
+  pid_t prodpid, pid = getpid();
   union semun arg;
   float customers_probablity[number_of_people][2];
   char *str = "sheesh";
@@ -47,21 +43,7 @@ void main(int argc, char *argv[])
   }
   else
   {
-
-    // printf("number of people = %d\n", number_of_people);
-    // printf("number of females = %d\n", number_of_females);
-    // printf("number of males = %d\n", number_of_males);
-    // printf("number of unserved people = %d\n", number_of_unserved_people);
-    // printf("number of unhappy people = %d\n", number_of_unhappy_people);
-    // printf("number of satisfied people = %d\n", number_of_satisfied_people);
-    // printf("number of tellers B = %d\n", number_of_tellers_B);
-    // printf("number of tellers R = %d\n", number_of_tellers_R);
-    // printf("number of tellers I = %d\n", number_of_tellers_I);
-    // printf("number of tellers T = %d\n", number_of_tellers_T);
-    // printf("queue threshold = %d\n", queue_threshold);
-    // printf("time inside the_detector males= %d\n", time_inside_the_detector_m);
-    // printf("time inside the_detector females= %d\n", time_inside_the_detector_f);
-    // printf("gate openning time = %d\n", gate_openning_time);
+    printf("The values are valid");
   }
 
   if (sigset(10, signal_catcher_ready_state) == -1)
@@ -121,26 +103,11 @@ void main(int argc, char *argv[])
 
   printf("My process ID is %d\n", getpid());
   printf("Children IDs:\n");
-
-  /*
-   * Fork the producer process
-   */
-  // if ((p_id = fork()) == -1)
-  // {
-  //   perror("problem with fork the producer");
-  //   exit(5);
-  // }
-  // else if (p_id == 0)
-  // {
-  //   execl("./producer", "./producer", (char *)0); // create  the first child process
-  //   perror("problem in execl-->  producer\n");
-  //   exit(6);
-  // }
   /*
    * Create the children processes
    */
 
-  for (int i = 0; i < number_of_people; i++)
+  for (int i = 0; i < number_of_people + 1; i++)
   {
     flag = 1;
     pid = fork(); /* create a child process */
@@ -154,7 +121,10 @@ void main(int argc, char *argv[])
     // case 1: childe process
     if (pid == 0)
     {
-
+      if (i == number_of_people)
+      {
+        execlp("./producer", "test", (char *)NULL); /* execute the child file with the argument team1 */
+      }
       if (i % 2 == 0)
         execlp("./consumer", str, "male", (char *)NULL); /* execute the child file with the argument team1 */
       else
@@ -166,8 +136,15 @@ void main(int argc, char *argv[])
     // case 2: parent process
     else
     {
-      players[i] = pid; // saves the id of my child
-      printf("%d \n ", players[i]);
+      if (i == number_of_people)
+      {
+        prodpid = pid;
+      }
+      else
+      {
+        players[i] = pid; // saves the id of my child
+        printf("%d \n ", players[i]);
+      }
     }
     while (flag == 1)
       ;
@@ -205,7 +182,6 @@ void main(int argc, char *argv[])
 
   return 0;
 }
-
 /*
  * Signal catcher for SIGUSR1
  */
@@ -257,5 +233,5 @@ void killallhaha(int sig)
 
 void ignore(int sig)
 {
-  printf("who sent me this signal!!!!!!!");
+  printf("who sent me this signal!!!!!!!\n");
 }

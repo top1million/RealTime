@@ -31,53 +31,72 @@ int number_of_tellers_T;
 int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
-int semid; 
-#define N_SLOTS 25// ! number of poeple 
-#define INT_MIN  -2147483648
+int semid;
+#define N_SLOTS 20
+#define INT_MIN -2147483648
 /* This declaration is *MISSING* is many solaris environments.
    It should be in the <sys/sem.h> file but often is not! If
    you receive a duplicate definition error message for semun
    then comment out the union declaration.
    */
-
-union semun
+typedef struct Person
 {
-  int val;
-  struct semid_ds *buf;
-  ushort *array;
-};
+    pid_t pid;
+    int gender;
+    int docType;
+    int innerHallProb;
+    int anticipationProb;
+    int timeInsideDetector;
+
+} Person;
 
 typedef struct Queue
 {
-  int front;
-  int rear;
-  int array[25];
+    int front;
+    int rear;
+    int array[25];
 } Queue;
 
 typedef struct OIM
 {
-  int seets[50];
-  int t_b;
-  int t_r;
-  int t_i;
-  int t_t;
-  Queue male_queue;
-  Queue female_queue;
+    int seets[50];
+    int t_b;
+    int t_r;
+    int t_i;
+    int t_t;
+    Queue male_queue;
+    Queue female_queue;
 } OIM;
+
+union semun
+{
+    int val;
+    struct semid_ds *buf;
+    ushort *array;
+};
 
 struct sembuf acquire = {0, -1, SEM_UNDO},
               release = {0, 1, SEM_UNDO};
 
 enum
 {
-  AVAIL_SLOTS,
-  TO_CONSUME
+    AVAIL_SLOTS,
+    TO_CONSUME
 };
-
+void createQueue(Queue *queue)
+{
+    queue->front = -1;
+    queue->rear = -1;
+}
 void enqueue(Queue *queue, int item)
 {
+    acquire.sem_num = 1; // blcoking the slot for the producer
 
-
+    if (semop(semid, &acquire, 1) == -1)
+    {
+        perror("semop -- producer -- acquire");
+        exit(4);
+    }
     if (queue->rear == 24)
         return;
     else
@@ -87,12 +106,9 @@ void enqueue(Queue *queue, int item)
         queue->rear++;
         queue->array[queue->rear] = item;
     }
-
-
 }
 int dequeue(Queue *queue)
 {
-
 
     int item;
     if (queue->front == -1)
@@ -110,23 +126,29 @@ int dequeue(Queue *queue)
         }
     }
 
-
-    printf("Dequeued item is %d\n",item);
+    printf("Dequeued item is %d\n", item);
     return item;
 }
-void show(Queue *queue , int n)
+void show(Queue *queue, int n)
 {
     if (queue->front == -1)
         printf("Empty Queue \n");
     else
-    { 
-        if(n==0)
-        printf("male Queue is : ");
+    {
+        if (n == 0)
+            printf("male Queue is : ");
         else
-        printf("female queue is : ");
-        for (int i = queue->front+1; i <= queue->rear; i++)
+            printf("female queue is : ");
+        for (int i = queue->front; i <= queue->rear; i++)
             printf("%d ", queue->array[i]);
         printf("\n");
     }
 }
-#endif 
+int queueLen(Queue *queue)
+{
+    if (queue->front == -1)
+        return 0;
+    else
+        return queue->rear - queue->front + 1;
+}
+#endif

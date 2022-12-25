@@ -144,8 +144,8 @@ The above command will hold both processes (parent and child) under the control
 
 c. Under gdb, if you wish to follow the child process, run the following command under gdb:
 
-gdb> set follow-fork-mode child
-gdb> set follow-exec-mode new
+set follow-fork-mode child
+set follow-exec-mode new
 
 The above will make the gdb debugger follow the child process while the parent process is suspended.
 
