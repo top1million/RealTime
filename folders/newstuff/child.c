@@ -8,12 +8,22 @@ Queue *fq;
 pid_t ppid;
 
 void signal_catcher(int);
-
+void signal_catcher_1(int);
 int main(int argc, char *argv[])
 {
     ppid = getppid();
     int shmid;
+    if (argc != 2)
+    { /* check if the user entered the correct number of arguments */
+        printf("Invalid arguments: %d\n", argc);
+        exit(-1);
+    }
     if (sigset(3, signal_catcher) == -1)
+    {
+        perror("Sigset can not set SIGUSR1");
+        exit(SIGINT);
+    }
+    if (sigset(4, signal_catcher_1) == -1)
     {
         perror("Sigset can not set SIGUSR1");
         exit(SIGINT);
@@ -31,10 +41,13 @@ int main(int argc, char *argv[])
         perror("shmget -- child-- access");
         exit(2);
     }
-    if (argc != 2)
-    { /* check if the user entered the correct number of arguments */
-        printf("Invalid arguments: %d\n", argc);
-        exit(-1);
+    /*
+     * Access the semaphore set
+     */
+    if ((semid = semget((int)ppid, 2, 0)) == -1)
+    {
+        perror("semget -- producer -- access");
+        exit(3);
     }
     if (strcmp("male", argv[0]) == 0)
     {
@@ -49,7 +62,7 @@ int main(int argc, char *argv[])
     // int drawer_pid = toint(argv[0]); /* get the pid of the drawer process */
     // g_drawer_pid = drawer_pid;
     kill(getppid(), 10); /* send signal 10 to parent to indicate that the child is ready */
-    // srand(getpid());                  /* seed the random number generator with the child's pid */
+    srand(getpid());                  /* seed the random number generator with the child's pid */
     // int sleep_time = rand() % 15 + 1; /* generate a random number between 1 and 10 */
     // if (sleep_time > 12)
     // {
@@ -66,27 +79,19 @@ int main(int argc, char *argv[])
 
 void signal_catcher(int sig)
 {
-    kill((int)ppid, 20);
-    if (genderFlag == 1)
-    {
-        writeFunc(getpid(), genderFlag);
-        enqueue(mq, getpid());
-        kill((int)ppid, 20);
-    }
-    else
-    {
-        writeFunc(getpid(), genderFlag);
-        enqueue(fq, getpid());
-        kill((int)ppid, 21);
-    }
+    
+}
+void signal_catcher_1(int sig)
+{
+    
 }
 
 void writeFunc(int num, int genderFlag)
 {
-    char str[50];
-    if (genderFlag == 1)
-        sprintf(str, "Customer with PID %d Has joined The male queue.\n", num);
-    else
-        sprintf(str, "Customer with PID %d Has joined The female queue.\n", num);
-    write(1, str, strlen(str));
+    // char str[50];
+    // if (genderFlag == 1)
+    //     sprintf(str, "Customer with PID %d Has joined The male queue.\n", num);
+    // else
+    //     sprintf(str, "Customer with PID %d Has joined The female queue.\n", num);
+    // write(1, str, strlen(str));
 }

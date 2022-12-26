@@ -1,29 +1,26 @@
 #include "file.h"
 
-#define maxSize 2000
-
-pid_t pid;
+pid_t pid, officer1, officer2;
 OIM *oim;
 Queue *mq, *fq;
+Person *people;
 Person peopleArray[maxSize];
 int readyCounter = 0;
-int flag, maleQueueFlag, femaleQueueFlag = 1;
+int flag = 1;
 int unServerdCounter = 0;
-int maleQueueCounter, femaleQueueCounter = 0;
+int happyCounter = 0;
+int unSatisfiedCouner = 0;
 
 int pick_random_customer(float[number_of_people][2], float);
 void signaleCatcherReadyState(int);
 void terminate(int);
-void ignoreSig(int);
 void unServerdCounterFunction(int);
-void maleQueueFlagChanger(int);
-void femaleQueueFlagChanger(int);
 int searchinArray(int, int[]);
 
 void main(int argc, char *argv[])
 {
     reading_file(fp);
-    int shmid;
+    int shmid, shmid1;
     pid = getpid();
     char str[10];
     float customersPorb[number_of_people][2];
@@ -32,6 +29,7 @@ void main(int argc, char *argv[])
     int cnt = number_of_people;
     static ushort start_val[2] = {N_SLOTS, 0};
     union semun arg;
+    int size = sizeof(Person) * number_of_people;
     srand(getpid());
     for (int i = 0; i < number_of_people; i++)
     {
@@ -47,17 +45,7 @@ void main(int argc, char *argv[])
         perror("sigset");
         exit(1);
     }
-    if (sigset(20, maleQueueFlagChanger) == SIG_ERR)
-    {
-        perror("sigset");
-        exit(1);
-    }
-    if (sigset(21, femaleQueueFlagChanger) == SIG_ERR)
-    {
-        perror("sigset");
-        exit(1);
-    }
-    if ((shmid = shmget((int)pid, sizeof(oim) * 2, IPC_CREAT | 0666)) != -1)
+    if ((shmid = shmget((int)pid, sizeof(OIM), IPC_CREAT | 0666)) != -1)
     { // size of the shared memory is the size of the struct which
 
         if ((oim = shmat(shmid, 0, 0)) == (char *)-1)
@@ -66,12 +54,26 @@ void main(int argc, char *argv[])
             exit(1);
         }
     }
-
     else
     {
         perror("problem with shmget");
         exit(2);
     }
+    if ((shmid1 = shmget((int)pid + 1, size, IPC_CREAT | 0666)) != -1)
+    { // size of the shared memory is the size of the struct which
+
+        if ((people = (Person *)shmat(shmid1, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
+
     if ((semid = semget((int)pid, 2, IPC_CREAT | 0666)) != -1)
     {
         arg.array = start_val;
@@ -87,14 +89,15 @@ void main(int argc, char *argv[])
         perror("problem with semget");
         exit(4);
     }
+
     mq = &oim->male_queue;
     fq = &oim->female_queue;
     createQueue(mq);
     createQueue(fq);
-
+    tostring(str, number_of_people);
     printf("Parent pid is : %d\n", getpid());
-    printf("Children:\n");
-    for (int i = 0; i < number_of_people; i++)
+    printf("Children : \n");
+    for (int i = 0; i < number_of_people + 2; i++)
     {
         flag = 1;
         pid = fork();
@@ -105,7 +108,16 @@ void main(int argc, char *argv[])
         }
         if (pid == 0)
         {
-            if (i % 2 == 0)
+            if (i == number_of_people)
+            {
+                execlp("./officer", "male", str, (char *)NULL);
+            }
+            else if (i == number_of_people + 1)
+            {
+                execlp("./officer", "female", str, (char *)NULL);
+            }
+
+            else if (i % 2 == 0)
                 execlp("./child", "male", str, (char *)NULL); /* execute the child file with the argument team1 */
             else
                 execlp("./child", "female", str, (char *)NULL); /* execute the child file with the argument team2 */
@@ -115,21 +127,33 @@ void main(int argc, char *argv[])
         }
         else
         {
-            peopleArray[i].pid = pid;
-            peopleArray[i].innerHallProb = rand() % 100 + 1;
-            peopleArray[i].anticipationProb = rand() % 100 + 1;
-            peopleArray[i].docType = rand() % 4 + 1;
-            peopleArray[i].gender = i % 2;
-            if(i%2==0){
-                peopleArray[i].timeInsideDetector = rand() % 2 + 1;
+            if (i == number_of_people)
+            {
+                officer1 = pid;
             }
-            else{
-                peopleArray[i].timeInsideDetector = rand() % 5 + 2;
+            else if (i == number_of_people + 1)
+            {
+                officer2 = pid;
             }
-            
-
+            else
+            {
+                peopleArray[i].pid = pid;
+                peopleArray[i].innerHallProb = rand() % 100 + 1;
+                peopleArray[i].anticipationProb = rand() % 100 + 1;
+                peopleArray[i].docType = rand() % 4 + 1;
+                peopleArray[i].gender = i % 2;
+                peopleArray[i].status = 0;
+                if (i % 2 == 0)
+                {
+                    peopleArray[i].timeInsideDetector = rand() % 2 + 1;
+                }
+                else
+                {
+                    peopleArray[i].timeInsideDetector = rand() % 5 + 2;
+                }
+            }
+            printf("%d %d ,   ", i, pid);
         }
-        printf("%d,", pid);
         while (flag == 1)
             ;
     }
@@ -153,49 +177,34 @@ void main(int argc, char *argv[])
     }
     fflush(stdin);
     fflush(stdout);
-    if (readyCounter == number_of_people)
+
+    if (readyCounter == number_of_people + 2)
     {
-        printf("\n***** Opening Gates its 8:00 am ....  ***** \n");
-        int numOfPeople = number_of_people;
         for (int i = 0; i < number_of_people; i++)
         {
-            int g = (turns[i] - getpid()+1) % 2;
-            if (g % 2 == 0)
-            {
-                maleQueueFlag = 1;
-                while (maleQueueCounter > 20)
-                {
-                    show(mq, 0);
-                    printf("***** Closing Male Rolling Gates ....  ***** %d \n", maleQueueCounter);
-                }
-                kill(turns[i], 3);
-                maleQueueCounter++;
-                while (maleQueueFlag == 1)
-                {
-                    pause();
-                }
-            }
-            else
-            {
-                femaleQueueFlag = 1;
-                if (femaleQueueCounter > 4)
-                {
-                    sleep(1);
-                    show(fq, 1);
-                    printf("***** Closing Female Rolling Gates ....  ***** %d \n", femaleQueueCounter);
-                    for (int j = 0; j < 5; j++)
-                    {
-                        int cust = dequeue(fq);
-                        femaleQueueCounter--;
-                    }
-                }
-                kill(turns[i], 3);
-                femaleQueueCounter++;
-                while (femaleQueueFlag == 1)
-                {
-                    pause();
-                }
-            }
+            oim->turns[i] = turns[i];
+            people[i] = peopleArray[i];
+        }
+
+        // kill(officer1, 4);
+        // kill(officer2, 4);
+        printf("\n***** Opening Gates its 8:00 am ....  ***** \n");
+        printf("***** All customers are ready to enter ***** \n");
+        while (1)
+        {
+
+            // int flag = rand() %2;
+            // if (flag == 1)
+            // {
+            //     kill(officer1, 3);
+            // }
+            // else
+            // {
+            //     kill(officer2, 3);
+            // }
+            // show(mq, 0);
+            // show(fq, 1);
+            // sleep(1);
         }
     }
 
@@ -204,7 +213,12 @@ void main(int argc, char *argv[])
         pause();
     }
 }
-
+writeFunc(int x)
+{
+    char str[20];
+    sprintf(str, "***   %d  ***\n", x);
+    write(1, str, strlen(str));
+}
 int searchinArray(int x, int arr[number_of_people])
 {
     for (int i = 0; i < number_of_people; i++)
@@ -215,6 +229,9 @@ int searchinArray(int x, int arr[number_of_people])
         }
     }
     return 0;
+    write(1, "Parent is waiting for children to finish", 40);
+
+    printf("test");
 }
 
 void signaleCatcherReadyState(int signum)
@@ -252,13 +269,14 @@ int pick_random_customer(float customers_probablity[number_of_people][2], float 
 void unServerdCounterFunction(int signum)
 {
     unServerdCounter++;
-    printf("unServerdCounter = %d\n", unServerdCounter);
-    write(1, "unServerdCounter = ", 19);
+    // printf("unServerdCounter = %d\n", unServerdCounter);
+    // write(1, "unServerdCounter = ", 19);
 }
 
 void terminate(int sig)
 {
-    // shmctl(oim, IPC_RMID, (struct shmid_ds *)0); /* remove */
+    semctl(semid, 0, IPC_RMID, 0);               /* remove semaphore */
+    shmctl(oim, IPC_RMID, (struct shmid_ds *)0); /* remove */
     for (int i = 0; i < number_of_people; i++)
     {
         kill(peopleArray[i].pid, 9);
@@ -266,30 +284,20 @@ void terminate(int sig)
     exit(0);
 }
 
-void writeFunc(int num)
+void tostring(char str[], int num)
 {
-    char str[50];
-    sprintf(str, "queue Counter is %d \n", num);
-    write(1, str, strlen(str));
+    int i, rem, len = 0, n;
+    n = num;
+    while (n != 0)
+    {
+        len++;
+        n /= 10;
+    }
+    for (i = 0; i < len; i++)
+    {
+        rem = num % 10;
+        num = num / 10;
+        str[len - (i + 1)] = rem + '0';
+    }
+    str[len] = '\0';
 }
-
-void maleQueueFlagChanger(int signum)
-{
-    maleQueueFlag = 0;
-}
-void femaleQueueFlagChanger(int signum)
-{
-    femaleQueueFlag = 0;
-}
-/*
-
-[1,2,3,4,5,6,7,8,9,10]
-
-12345
-1
-2
-3
-4
-56789
-
-*/

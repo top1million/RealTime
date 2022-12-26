@@ -4,6 +4,8 @@
 /*
  * Common header file: parent, producer and consumer
  */
+#include <sys/resource.h>
+
 
 #include <stdio.h>
 #include <unistd.h>
@@ -16,6 +18,7 @@
 #include <wait.h>
 #include <signal.h>
 #include <math.h>
+#define BUFFER "./buffer"
 
 int number_of_people;
 int number_of_females;
@@ -32,7 +35,8 @@ int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
 int semid;
-#define N_SLOTS 20
+#define maxSize 1000
+#define N_SLOTS 25
 #define INT_MIN -2147483648
 /* This declaration is *MISSING* is many solaris environments.
    It should be in the <sys/sem.h> file but often is not! If
@@ -47,14 +51,14 @@ typedef struct Person
     int innerHallProb;
     int anticipationProb;
     int timeInsideDetector;
-
+    int status;
 } Person;
 
 typedef struct Queue
 {
     int front;
     int rear;
-    int array[25];
+    int array[50];
 } Queue;
 
 typedef struct OIM
@@ -66,6 +70,7 @@ typedef struct OIM
     int t_t;
     Queue male_queue;
     Queue female_queue;
+    int turns[maxSize];
 } OIM;
 
 union semun
@@ -83,6 +88,18 @@ enum
     AVAIL_SLOTS,
     TO_CONSUME
 };
+
+Person findme(pid_t pid, Person *peopleArray)
+{
+    for (int i = 0; i < number_of_people; i++)
+    {
+        if (peopleArray[i].pid == pid)
+        {
+            return peopleArray[i];
+        }
+    }
+} 
+
 void createQueue(Queue *queue)
 {
     queue->front = -1;
@@ -90,8 +107,6 @@ void createQueue(Queue *queue)
 }
 void enqueue(Queue *queue, int item)
 {
-    acquire.sem_num = 1; // blcoking the slot for the producer
-
     if (semop(semid, &acquire, 1) == -1)
     {
         perror("semop -- producer -- acquire");
@@ -105,6 +120,7 @@ void enqueue(Queue *queue, int item)
             queue->front = 0;
         queue->rear++;
         queue->array[queue->rear] = item;
+        printf("Enqueued item is %d\n", item);
     }
 }
 int dequeue(Queue *queue)
@@ -150,5 +166,12 @@ int queueLen(Queue *queue)
         return 0;
     else
         return queue->rear - queue->front + 1;
+}
+int queueTop(Queue *queue)
+{
+    if (queue->front == -1)
+        return INT_MIN;
+    else
+        return queue->array[queue->front];
 }
 #endif
