@@ -3,6 +3,8 @@
 OIM *oim;
 Queue *mq;
 Queue *fq;
+Queue *iq1,*iq2 , *iq3 , *iq4;
+innerHall *innerHallSHM;
 pid_t ppid;
 Turn *turns;
 Person *people;
@@ -69,6 +71,20 @@ int main(int argc, char *argv[])
         perror("problem with shmget");
         exit(2);
     }
+    if ((shmid3 = shmget((int)pid + 3, 0, 0)) != -1)
+    { // size of the shared memory is the size of the struct which
+
+        if ((innerHallSHM = (innerHall *)shmat(shmid3, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
     /*
      * Access the semaphore set
      */
@@ -82,6 +98,12 @@ int main(int argc, char *argv[])
         perror("semget -- producer -- access");
         exit(3);
     }
+    if ((semid3 = semget((int)ppid + 3, 2, 0)) == -1)
+    {
+        perror("semget -- producer -- access");
+        exit(3);
+    }
+
     if (strcmp("male", argv[0]) == 0)
     {
         genderFlag = 0; /* set the team flag to 1 if the player is from team one */
@@ -94,6 +116,10 @@ int main(int argc, char *argv[])
     gunit = number_of_people;
     mq = &oim->male_queue;
     fq = &oim->female_queue;
+    iq1 = &innerHallSHM->tellerOneQueue;
+    iq2 = &innerHallSHM->tellerTwoQueue;
+    iq3 = &innerHallSHM->tellerThreeQueue;
+    iq4 = &innerHallSHM->tellerFourQueue;
     srand(getpid());     /* seed the random number generator with the child's pid */
     kill(getppid(), 10); /* send signal 10 to parent to indicate that the child is ready */
     while (1)
@@ -108,7 +134,7 @@ void pick(int num)
 {
     int flag = genderFlag;
     for (int i = 0; i < gunit; i++)
-    { 
+    {
         if (flag == 0)
         {
 
@@ -149,7 +175,9 @@ void pick_top(Queue *queue, int semid)
     int pid = dequeue(queue);
     int g = searchinArrayStruct(pid);
     sleep(people[g].timeInsideDetector);
-    people[g].status = 2;
+    if(people[g].docType == 1){
+        enqueueP(pid,)
+    }
     release.sem_num = AVAIL_SLOTS;
     if (semop(semid, &release, 1) == -1)
     {
@@ -190,4 +218,23 @@ int searchinArrayStruct(int x)
     write(1, "Parent is waiting for children to finish", 40);
 
     printf("test");
+}
+
+void enqueueP(int pid, Queue *queue, int semid)
+{
+    acquire.sem_num = AVAIL_SLOTS;
+    
+    if ( semop(semid, &acquire, 1) == -1 ) {
+      perror("semop -- producer -- acquire");
+      exit(4);
+    }
+
+    enqueue(queue, pid);
+
+    release.sem_num = TO_CONSUME;
+    
+    if ( semop(semid, &release, 1) == -1 ) {
+      perror("semop -- producer -- release");
+      exit(5);
+    }
 }

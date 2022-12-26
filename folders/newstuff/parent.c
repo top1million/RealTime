@@ -2,7 +2,7 @@
 
 pid_t pid, producer1, producer2, consumer;
 OIM *oim;
-Queue *mq, *fq;
+Queue *mq, *fq, *iq1 , *iq2 , *iq3 , *iq4;
 Person *people;
 Turn *turnsSHM;
 innerHall *innerHallSHM;
@@ -31,8 +31,9 @@ void main(int argc, char *argv[])
     int cnt = number_of_people;
     static ushort start_val[2] = {N_SLOTS, 0};
     static ushort start_val1[2] = {N_SLOTS, 0};
-    static ushort start_val2[2] = {N_SLOTS, 0};
-    union semun arg, arg1 , arg2;
+    static ushort start_val2[4] = {4, 0, 0, 0};
+    static ushort start_val3[2] = {50, 0};
+    union semun arg, arg1, arg2, arg3;
     int size = sizeof(Person) * number_of_people;
     int size1 = sizeof(Turn) * number_of_people;
     srand(getpid());
@@ -139,7 +140,7 @@ void main(int argc, char *argv[])
         perror("semget -- parent -- creation");
         exit(4);
     }
-    if ((semid2 = semget((int)pid + 2, 2,
+    if ((semid2 = semget((int)pid + 2, 4,
                          IPC_CREAT | 0666)) != -1)
     {
         arg2.array = start_val2;
@@ -155,8 +156,64 @@ void main(int argc, char *argv[])
         perror("semget -- parent -- creation");
         exit(4);
     }
+    if ((semid3 = semget((int)pid + 3, 2,
+                         IPC_CREAT | 0666)) != -1)
+    {
+        arg3.array = start_val3;
+
+        if (semctl(semid3, 0, SETALL, arg3) == -1)
+        {
+            perror("semctl -- parent -- initialization");
+            exit(3);
+        }
+    }
+    else
+    {
+        perror("semget -- parent -- creation");
+        exit(4);
+    }
+    if((semid4 = semget((int)pid + 4, 2,
+                         IPC_CREAT | 0666)) != -1)
+    {
+        arg3.array = start_val3;
+
+        if (semctl(semid4, 0, SETALL, arg3) == -1)
+        {
+            perror("semctl -- parent -- initialization");
+            exit(3);
+        }
+    }
+    else
+    {
+        perror("semget -- parent -- creation");
+        exit(4);
+    }
+    if((semid5 = semget((int)pid + 5, 2,
+                         IPC_CREAT | 0666)) != -1)
+    {
+        arg3.array = start_val3;
+
+        if (semctl(semid5, 0, SETALL, arg3) == -1)
+        {
+            perror("semctl -- parent -- initialization");
+            exit(3);
+        }
+    }
+    else
+    {
+        perror("semget -- parent -- creation");
+        exit(4);
+    }
     mq = &oim->male_queue;
     fq = &oim->female_queue;
+    iq1 = &innerHallSHM->tellerOneQueue;
+    iq2 = &innerHallSHM->tellerTwoQueue;
+    iq3 = &innerHallSHM->tellerThreeQueue;
+    iq4 = &innerHallSHM->tellerFourQueue;
+    createQueue(iq1);
+    createQueue(iq2);
+    createQueue(iq3);
+    createQueue(iq4);
     createQueue(mq);
     createQueue(fq);
     tostring(str, number_of_people);

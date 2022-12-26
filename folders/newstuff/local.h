@@ -33,7 +33,7 @@ int number_of_tellers_T;
 int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
-int semid, semid1 , semid2;
+int semid, semid1, semid2, semid3;
 #define maxSize 1000
 #define N_SLOTS 10
 #define INT_MIN -2147483648
@@ -61,9 +61,12 @@ typedef struct Queue
 } Queue;
 typedef struct innerHall
 {
-    Queue queue;
+    Queue tellerOneQueue;
+    Queue tellerTwoQueue;
+    Queue tellerThreeQueue;
+    Queue tellerFourQueue;
+    int Capacity;
     int seats[50];
-    int tellers[4];
 } innerHall;
 
 typedef struct OIM
@@ -144,16 +147,12 @@ int dequeue(Queue *queue)
     printf("Dequeued item is %d\n", item);
     return item;
 }
-void show(Queue *queue, int n)
+void show(Queue *queue)
 {
     if (queue->front == -1)
         printf("Empty Queue \n");
     else
     {
-        if (n == 0)
-            printf("male Queue is : ");
-        else
-            printf("female queue is : ");
         for (int i = queue->front; i <= queue->rear; i++)
             printf("%d ", queue->array[i]);
         printf("\n");

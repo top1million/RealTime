@@ -1,5 +1,6 @@
 #include "local.h"
 
+innerHall *innerHallSHM;
 OIM *oim;
 Queue *mq;
 Queue *fq;
@@ -13,7 +14,7 @@ void pick(int);
 int main(int argc, char *argv[])
 {
     ppid = getppid();
-    int shmid, shmid1, shmid2;
+    int shmid, shmid1, shmid2 , shmid3;
     srand(getpid());
     if (argc != 2)
     { /* check if the user entered the correct number of arguments */
@@ -67,6 +68,20 @@ int main(int argc, char *argv[])
         perror("problem with shmget");
         exit(2);
     }
+    if ((shmid3 = shmget((int)pid + 3, 0,0)) != -1)
+    { // size of the shared memory is the size of the struct which
+
+        if ((innerHallSHM =(innerHall *) shmat(shmid3, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
     /*
      * Access the semaphore set
      */
@@ -81,33 +96,21 @@ int main(int argc, char *argv[])
         exit(3);
     }
     int number_of_people = toint(argv[1]);
+    int teller_id = toint(argv[0]);
     gunit = number_of_people;
     srand(getpid());     /* seed the random number generator with the child's pid */
     kill(getppid(), 10); /* send signal 10 to parent to indicate that the child is ready */
-    while (1)
+    int sleep_limit =  rand() % 20;
+    int j = 20 - sleep_limit;
+    int i = 0;
+    while (j--)
     {
-        pause();
+        
+        sleep(sleep(rand()%sleep_limit + 1));
+        i++;
     }
 
     return 0;
-}
-
-void pick(int num)
-{
-    int flag = genderFlag;
-    for (int i = 0; i < gunit; i++)
-    { 
-        if (flag == 0)
-        {
-
-            pick_top(mq, semid);
-        }
-        else
-        {
-
-            pick_top(fq, semid1);
-        }
-    }
 }
 
 void printsem()
@@ -124,24 +127,6 @@ void printsem()
 
         sprintf(str, "Semaphore %d has value of %d\n", i, sem_value);
         write(1, str, strlen(str));
-    }
-}
-void pick_top(Queue *queue, int semid)
-{
-    acquire.sem_num = TO_CONSUME;
-    if (semop(semid, &acquire, 1) == -1)
-    {
-        perror("semop -- acquire -- child");
-        exit(4);
-    }
-    int pid = dequeue(queue);
-    int g = searchinArrayStruct(pid);
-    sleep(g);
-    release.sem_num = AVAIL_SLOTS;
-    if (semop(semid, &release, 1) == -1)
-    {
-        perror("semop -- release -- child");
-        exit(4);
     }
 }
 

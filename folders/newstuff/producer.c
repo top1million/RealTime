@@ -163,23 +163,6 @@ void enqueueP(int pid, Queue *queue, int semid)
       exit(5);
     }
 }
-// void joinMaleQueue(int pid){
-//     acquire.sem_num = AVAIL_SLOTS;
-//     if (semop(semid, &acquire, 1) == -1)
-//     {
-//         perror("semop -- acquire -- child");
-//         exit(4);
-//     }
-
-//     enqueue(mq, pid);
-
-//     release.sem_num = TO_CONSUME;
-//     if (semop(semid, &release, 1) == -1)
-//     {
-//         perror("semop -- release -- child");
-//         exit(4);
-//     }
-// }
 
 int toint(char str[])
 {
