@@ -1,8 +1,14 @@
 #include "local.h"
 
+int genderFlag = 0;
+int g_drawer_pid = 0;
+OIM *oim;
+Queue *mq;
+Queue *fq;
+pid_t ppid;
+
 void signal_catcher(int);
 void signal_catcher_1(int);
-
 int main(int argc, char *argv[])
 {
     ppid = getppid();

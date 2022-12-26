@@ -11,7 +11,7 @@ Person *people;
 int gunit;
 int *array;
 int k =0 ;
-
+int teller_id;
 void ctrl(int);
 void picktop(int);
 
@@ -20,10 +20,10 @@ int main(int argc, char *argv[])
     ppid = getppid();
     int shmid, shmid1, shmid2, shmid3;
     srand(getpid());
-    if(segset(3, ctrl) == -1)
+    if (sigset(3, ctrl) == SIG_ERR)
     {
-        perror("Sigset can not set SIGUSR1");
-        exit(SIGINT);
+        perror("sigset");
+        exit(1);
     }
     if (argc != 2)
     { /* check if the user entered the correct number of arguments */
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 }
 void ctrl(int sig)
 {
-    int sleep_limit = rand() % 2;
+    int sleep_limit = rand() % 4;
     int j = 20 - sleep_limit;
     int i = 0;
     while (k < gunit)
@@ -178,10 +178,6 @@ void ctrl(int sig)
             pickTop(iq4, semid5);
             break;
         }
-        show(iq1);
-        show(iq2);
-        show(iq3);
-        show(iq4);
         sleep(sleep(rand() % sleep_limit + 1));
         i++;
     }
@@ -201,10 +197,13 @@ void pickTop(Queue *q, int semid)
     {
         kill(ppid, 22);
         k--;
+        write(1, "Customer left the bank", 22);
     }
     else
     {
         kill(ppid, 21);
+        k--;
+        write(1, "Customer left the bank", 22);
     }
 
     release.sem_num = AVAIL_SLOTS;

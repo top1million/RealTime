@@ -112,6 +112,7 @@ void createQueue(Queue *queue)
     queue->front = -1;
     queue->rear = -1;
 }
+
 void enqueue(Queue *queue, int item)
 {
     if (queue->rear == 24)
@@ -122,16 +123,19 @@ void enqueue(Queue *queue, int item)
             queue->front = 0;
         queue->rear++;
         queue->array[queue->rear] = item;
-        // printf("Enqueued item is %d\n", item);
+        //printf("Enqueued item is %d queue len %d\n", item , queueLen(queue));
     }
 }
+/// @brief 
+/// @param queue 
+/// @return 
 int dequeue(Queue *queue)
 {
 
     int item;
     if (queue->front == -1)
     {
-        // printf("Queue is empty\n");
+        printf("Queue is empty\n");
         return INT_MIN;
     }
     else
@@ -144,7 +148,7 @@ int dequeue(Queue *queue)
         }
     }
 
-    // printf("Dequeued item is %d\n", item);
+    //printf("Dequeued item is %d queue len\n", item,queueLen(queue));
     return item;
 }
 void show(Queue *queue)
@@ -158,18 +162,18 @@ void show(Queue *queue)
         printf("\n");
     }
 }
-int queueLen(Queue *queue)
-{
-    if (queue->front == -1)
-        return 0;
-    else
-        return queue->rear - queue->front + 1;
-}
 int queueTop(Queue *queue)
 {
     if (queue->front == -1)
         return INT_MIN;
     else
         return queue->array[queue->front];
+}
+int queueLen(Queue *queue)
+{
+    if (queue->front == -1)
+        return 0;
+    else
+        return queue->rear - queue->front + 1;
 }
 #endif

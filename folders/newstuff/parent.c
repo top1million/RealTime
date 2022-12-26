@@ -1,5 +1,5 @@
 #include "file.h"
-
+int drawg;
 pid_t pid, producer1, producer2, consumer;
 OIM *oim;
 Queue *mq, *fq, *iq1, *iq2, *iq3, *iq4;
@@ -54,17 +54,17 @@ void main(int argc, char *argv[])
         perror("sigset");
         exit(1);
     }
-    if (sigset(20, unServedFunction) == SIG_ERR)
+    if (sigset(15, unServedFunction) == SIG_ERR)
     {
         perror("sigset");
         exit(1);
     }
-    if (sigset(22, satisfiedFunction) == SIG_ERR)
+    if (sigset(16, satisfiedFunction) == SIG_ERR)
     {
         perror("sigset");
         exit(1);
     }
-    if (sigset(21, unHappyFunction) == SIG_ERR)
+    if (sigset(17, unHappyFunction) == SIG_ERR)
     {
         perror("sigset");
         exit(1);
@@ -222,6 +222,7 @@ void main(int argc, char *argv[])
         perror("semget -- parent -- creation");
         exit(4);
     }
+
     mq = &oim->male_queue;
     fq = &oim->female_queue;
     iq1 = &innerHallSHM->tellerOneQueue;
@@ -234,6 +235,19 @@ void main(int argc, char *argv[])
     createQueue(iq4);
     createQueue(mq);
     createQueue(fq);
+    int drawer_pid = fork(); /* create a child process */ /* convert the pid to string */
+    if (drawer_pid == -1)
+    { /* case 0: failure to create child */
+        printf("fork failure ... getting out\n");
+        exit(-1);
+    }
+    if (drawer_pid == 0)
+    {                                                      /* case 1: childe process */
+        execlp("./draw", "teller_id4", str, (char *)NULL); /* execute the child file with the argument drawer */
+        perror("exec failure ");                           /* this when there is an exec failure : No such file or directory */
+        while (1)
+            ;
+    }
     tostring(str, number_of_people);
     printf("Parent pid is : %d\n", getpid());
     printf("Children : \n");
@@ -276,7 +290,10 @@ void main(int argc, char *argv[])
             {
                 execlp("./innerhall", "teller_id4", str, (char *)NULL);
             }
-
+            else if (i == number_of_people + 7)
+            {
+                execlp("./draw", "teller_id4", str, (char *)NULL);
+            }
             else if (i % 2 == 0)
                 execlp("./child", "male", str, (char *)NULL); /* execute the child file with the argument team1 */
             else
@@ -315,6 +332,10 @@ void main(int argc, char *argv[])
             {
                 teller4 = pid;
             }
+            else if (i == number_of_people + 7)
+            {
+                drawg = pid;
+            }
             else
             {
                 peopleArray[i].pid = pid;
@@ -332,11 +353,12 @@ void main(int argc, char *argv[])
                     peopleArray[i].timeInsideDetector = rand() % 5 + 2;
                 }
             }
-            printf("%d %d ,   ", i, pid);
+            printf("%d, ", pid);
         }
         while (flag == 1)
             ;
     }
+
     for (int i = 0; i < number_of_people; i++)
     {
         float prob = (number_of_people - i) / (float)number_of_people;
@@ -477,11 +499,11 @@ void tostring(char str[], int num)
 void unServedFunction(int signum)
 {
     unServerdCounter++;
-    printf("********SHITTTTTTTTTTTTTTTTTTTTTT*******");
     if (unServerdCounter > number_of_unserved_people)
     {
+        // printf("Number of unserved people exceeded the limit\n");
+        // printf("exiting the program\n");
         // terminate(0);
-        write(1,"unServerdCounter = ", 19);
     }
     // printf("unServerdCounter = %d\n", unServerdCounter);
     // write(1, "unServerdCounter = ", 19);
@@ -491,20 +513,22 @@ void unHappyFunction(int signum)
     unHappyCounter++;
     if (unHappyCounter > number_of_unhappy_people)
     {
+        // printf("Number of unhappy people exceeded the limit\n");
+        // printf("exiting the program\n");
         // terminate(0);
-        write(1,"unServerdCounter = ", 19);
     }
     // printf("unHappyCounter = %d\n", unHappyCounter);
     // write(1, "unHappyCounter = ", 16);
 }
 void satisfiedFunction(int signum)
 {
-    printf("********SHITTTTTTTTTTTTTTTTTTTTTT*******");
     satisfiedCouner++;
+    printf("lastshit");
     if (satisfiedCouner > number_of_satisfied_people)
     {
+        printf("Number of satisfied people exceeded the limit\n");
+        printf("exiting the program\n");
         // terminate(0);
-        write(1,"unServerdCounter = ", 19);
     }
     // printf("unSatifiedCounter = %d\n", unSatifiedCounter);
     // write(1, "unSatifiedCounter = ", 21);
