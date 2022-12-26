@@ -71,7 +71,7 @@ main(int argc, char *argv[])
     }
     strcpy(memptr->buffer[memptr->tail], local_buffer);
     printf("P: [%d] %s.\n", memptr->tail, memptr->buffer[memptr->tail]);
-    
+    printsem( semid);
     memptr->tail = (memptr->tail + 1) % N_SLOTS;
 
     release.sem_num = TO_CONSUME;
@@ -84,4 +84,20 @@ main(int argc, char *argv[])
   }
     
   exit(0);
+}
+void printsem(int semid)
+{
+    int sem_value;
+    for (int i = 0; i < 2; i++)
+    { /* display contents */
+        char str[100];
+        if ((sem_value = semctl(semid, i, GETVAL, 0)) == -1)
+        {
+            perror("semctl: GETVAL");
+            exit(4);
+        }
+
+        sprintf(str, "Semaphore %d has value of %d\n", i, sem_value);
+        write(1, str, strlen(str));
+    }
 }
