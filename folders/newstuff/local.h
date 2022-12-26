@@ -6,7 +6,6 @@
  */
 #include <sys/resource.h>
 
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -36,7 +35,7 @@ int number_of_satisfied_people;
 int gate_openning_time;
 int semid;
 #define maxSize 1000
-#define N_SLOTS 25
+#define N_SLOTS 30
 #define INT_MIN -2147483648
 /* This declaration is *MISSING* is many solaris environments.
    It should be in the <sys/sem.h> file but often is not! If
@@ -58,7 +57,7 @@ typedef struct Queue
 {
     int front;
     int rear;
-    int array[50];
+    int array[25];
 } Queue;
 
 typedef struct OIM
@@ -70,8 +69,12 @@ typedef struct OIM
     int t_t;
     Queue male_queue;
     Queue female_queue;
-    int turns[maxSize];
 } OIM;
+
+typedef struct Turn
+{
+    int pid;
+} Turn;
 
 union semun
 {
@@ -98,7 +101,7 @@ Person findme(pid_t pid, Person *peopleArray)
             return peopleArray[i];
         }
     }
-} 
+}
 
 void createQueue(Queue *queue)
 {

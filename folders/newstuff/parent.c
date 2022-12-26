@@ -4,6 +4,7 @@ pid_t pid, officer1, officer2;
 OIM *oim;
 Queue *mq, *fq;
 Person *people;
+Turn *turnsSHM;
 Person peopleArray[maxSize];
 int readyCounter = 0;
 int flag = 1;
@@ -20,7 +21,7 @@ int searchinArray(int, int[]);
 void main(int argc, char *argv[])
 {
     reading_file(fp);
-    int shmid, shmid1;
+    int shmid, shmid1 , shmid2 ;
     pid = getpid();
     char str[10];
     float customersPorb[number_of_people][2];
@@ -30,6 +31,7 @@ void main(int argc, char *argv[])
     static ushort start_val[2] = {N_SLOTS, 0};
     union semun arg;
     int size = sizeof(Person) * number_of_people;
+    int size1 = sizeof(Turn) * number_of_people;
     srand(getpid());
     for (int i = 0; i < number_of_people; i++)
     {
@@ -63,6 +65,20 @@ void main(int argc, char *argv[])
     { // size of the shared memory is the size of the struct which
 
         if ((people = (Person *)shmat(shmid1, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
+    if ((shmid2 = shmget((int)pid + 2, size1, IPC_CREAT | 0666)) != -1)
+    { // size of the shared memory is the size of the struct which
+
+        if ((turnsSHM = (Turn *)shmat(shmid2, 0, 0)) == (char *)-1)
         {
             perror("problem with shmat");
             exit(1);
@@ -182,17 +198,18 @@ void main(int argc, char *argv[])
     {
         for (int i = 0; i < number_of_people; i++)
         {
-            oim->turns[i] = turns[i];
+            turnsSHM[i].pid = turns[i];
             people[i] = peopleArray[i];
         }
 
-        // kill(officer1, 4);
+        kill(officer1, 4);
         // kill(officer2, 4);
         printf("\n***** Opening Gates its 8:00 am ....  ***** \n");
         printf("***** All customers are ready to enter ***** \n");
         while (1)
         {
-
+            
+            pause();
             // int flag = rand() %2;
             // if (flag == 1)
             // {

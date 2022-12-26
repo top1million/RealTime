@@ -4,16 +4,18 @@ OIM *oim;
 Queue *mq;
 Queue *fq;
 pid_t ppid;
+Turn *turns;
+Person *people;
 int counter = 0;
 int genderFlag = 0;
-int gunit;
+int gunit, semid;
 int *array;
 void signal_catcher(int);
 void start(int);
 int main(int argc, char *argv[])
 {
     ppid = getppid();
-    int shmid;
+    int shmid, shmid1, shmid2;
     srand(getpid());
     if (argc != 2)
     { /* check if the user entered the correct number of arguments */
@@ -43,6 +45,33 @@ int main(int argc, char *argv[])
     else
     {
         perror("shmget -- child-- access");
+        exit(2);
+    }
+    if ((shmid1 = shmget((int)ppid + 1, 0, 0)) != -1)
+    { // they are connected to the memory using the ppide ( they depend on the parent process id)
+        if ((people = (Person *)shmat(shmid1, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
+    if ((shmid2 = shmget((int)ppid + 2, 0, 0)) != -1)
+    { // size of the shared memory is the size of the struct which
+
+        if ((turns = (Turn *)shmat(shmid2, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
         exit(2);
     }
     /*
@@ -78,35 +107,57 @@ int main(int argc, char *argv[])
 void signal_catcher(int num)
 {
     int flag = genderFlag;
-    if (counter > 0)
-    {
-        if (flag == 1)
-        {
+    // if (counter > 0)
+    // {
+    //     if (flag == 1)
+    //     {
 
-            pick_top();
-        }
-        else
-        {
+    //         pick_top();
+    //     }
+    //     else
+    //     {
 
-            pick_top();
-        }
-        counter--;
-    }
+    //         pick_top();
+    //     }
+    //     counter--;
+    // }
 }
 void start(int x)
 {
-        int flag = genderFlag;
-        for(int i=flag;i<gunit;i=i+2){
-            writeFunc(gunit);
-            enqueueP(oim->turns[i]);
-            counter++;
-            
+    int flag = genderFlag;
+    for (int i = flag; i < gunit; i = i + 2)
+    {
+        writeFunc(turns[i].pid, i);
+        if (flag == 0)
+        {
+            enqueueP(turns[i].pid, mq);
         }
-    
+        else
+        {
+            enqueueP(turns[i].pid, fq);
+        }
+        printsem();
+        counter++;
+    }
 }
+void printsem()
+{
+    int sem_value;
+    for (int i = 0; i < 2; i++)
+    { /* display contents */
+        char str[100];
+        if ((sem_value = semctl(semid, i, GETVAL, 0)) == -1)
+        {
+            perror("semctl: GETVAL");
+            exit(4);
+        }
 
-
-void pick_top(){
+        sprintf(str, "Semaphore %d has value of %d\n", i, sem_value);
+        write(1, str, strlen(str));
+    }
+}
+void pick_top()
+{
     acquire.sem_num = TO_CONSUME;
     if (semop(semid, &acquire, 1) == -1)
     {
@@ -114,13 +165,13 @@ void pick_top(){
         exit(4);
     }
 
-    if (genderFlag == 1){
+    if (genderFlag == 1)
+    {
         dequeue(mq);
- 
     }
-    else{
+    else
+    {
         dequeue(fq);
-
     }
     release.sem_num = AVAIL_SLOTS;
     if (semop(semid, &release, 1) == -1)
@@ -129,7 +180,8 @@ void pick_top(){
         exit(4);
     }
 }
-void enqueueP(int pid){
+void enqueueP(int pid, Queue *queue)
+{
     acquire.sem_num = AVAIL_SLOTS;
     if (semop(semid, &acquire, 1) == -1)
     {
@@ -137,13 +189,7 @@ void enqueueP(int pid){
         exit(4);
     }
 
-    if (genderFlag == 1){
-        enqueue(mq, pid);
-    }
-    else{
-        enqueue(fq, pid);
-    }
-
+    enqueue(queue, pid);
 
     release.sem_num = TO_CONSUME;
     if (semop(semid, &release, 1) == -1)
@@ -152,12 +198,23 @@ void enqueueP(int pid){
         exit(4);
     }
 }
-writeFunc(int x)
-{
-    char str[20];
-    sprintf(str, "*** shit   %d  ***\n", x);
-    write(1, str, strlen(str));
-}
+// void joinMaleQueue(int pid){
+//     acquire.sem_num = AVAIL_SLOTS;
+//     if (semop(semid, &acquire, 1) == -1)
+//     {
+//         perror("semop -- acquire -- child");
+//         exit(4);
+//     }
+
+//     enqueue(mq, pid);
+
+//     release.sem_num = TO_CONSUME;
+//     if (semop(semid, &release, 1) == -1)
+//     {
+//         perror("semop -- release -- child");
+//         exit(4);
+//     }
+// }
 
 int toint(char str[])
 {
@@ -169,4 +226,11 @@ int toint(char str[])
     }
 
     return num;
+}
+
+writeFunc(int x, int i)
+{
+    char str[20];
+    sprintf(str, "*** %d   %d  ***\n", i, x);
+    write(1, str, strlen(str));
 }
