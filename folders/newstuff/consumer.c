@@ -3,9 +3,10 @@
 OIM *oim;
 Queue *mq;
 Queue *fq;
-Queue *iq1,*iq2 , *iq3 , *iq4;
+Queue *iq1, *iq2, *iq3, *iq4;
 innerHall *innerHallSHM;
 pid_t ppid;
+int shmid3;
 Turn *turns;
 Person *people;
 int counter = 0;
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
         perror("problem with shmget");
         exit(2);
     }
-    if ((shmid3 = shmget((int)pid + 3, 0, 0)) != -1)
+    if ((shmid3 = shmget((int)ppid + 3, 0, 0)) != -1)
     { // size of the shared memory is the size of the struct which
 
         if ((innerHallSHM = (innerHall *)shmat(shmid3, 0, 0)) == (char *)-1)
@@ -98,7 +99,22 @@ int main(int argc, char *argv[])
         perror("semget -- producer -- access");
         exit(3);
     }
+    if ((semid2 = semget((int)ppid + 2, 2, 0)) == -1)
+    {
+        perror("semget -- producer -- access");
+        exit(3);
+    }
     if ((semid3 = semget((int)ppid + 3, 2, 0)) == -1)
+    {
+        perror("semget -- producer -- access");
+        exit(3);
+    }
+    if ((semid4 = semget((int)ppid + 4, 2, 0)) == -1)
+    {
+        perror("semget -- producer -- access");
+        exit(3);
+    }
+    if ((semid5 = semget((int)ppid + 5, 2, 0)) == -1)
     {
         perror("semget -- producer -- access");
         exit(3);
@@ -175,8 +191,21 @@ void pick_top(Queue *queue, int semid)
     int pid = dequeue(queue);
     int g = searchinArrayStruct(pid);
     sleep(people[g].timeInsideDetector);
-    if(people[g].docType == 1){
-        enqueueP(pid,)
+    if (people[g].docType == 1)
+    {
+        enqueueP(pid, iq1, semid2);
+    }
+    else if (people[g].docType == 2)
+    {
+        enqueueP(pid, iq2, semid3);
+    }
+    else if (people[g].docType == 3)
+    {
+        enqueueP(pid, iq3, semid4);
+    }
+    else if (people[g].docType == 4)
+    {
+        enqueueP(pid, iq4, semid5);
     }
     release.sem_num = AVAIL_SLOTS;
     if (semop(semid, &release, 1) == -1)
@@ -201,7 +230,7 @@ int toint(char str[])
 writeFunc(int x, int i)
 {
     char str[20];
-    sprintf(str, "*** %d   %d  ***\n", i, x);
+    sprintf(str, "***********************\n");
     write(1, str, strlen(str));
 }
 
@@ -223,18 +252,19 @@ int searchinArrayStruct(int x)
 void enqueueP(int pid, Queue *queue, int semid)
 {
     acquire.sem_num = AVAIL_SLOTS;
-    
-    if ( semop(semid, &acquire, 1) == -1 ) {
-      perror("semop -- producer -- acquire");
-      exit(4);
+
+    if (semop(semid, &acquire, 1) == -1)
+    {
+        perror("semop -- producer -- acquire");
+        exit(4);
     }
 
     enqueue(queue, pid);
-
     release.sem_num = TO_CONSUME;
-    
-    if ( semop(semid, &release, 1) == -1 ) {
-      perror("semop -- producer -- release");
-      exit(5);
+
+    if (semop(semid, &release, 1) == -1)
+    {
+        perror("semop -- producer -- release");
+        exit(5);
     }
 }

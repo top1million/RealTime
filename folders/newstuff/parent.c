@@ -2,7 +2,7 @@
 
 pid_t pid, producer1, producer2, consumer;
 OIM *oim;
-Queue *mq, *fq, *iq1 , *iq2 , *iq3 , *iq4;
+Queue *mq, *fq, *iq1, *iq2, *iq3, *iq4;
 Person *people;
 Turn *turnsSHM;
 innerHall *innerHallSHM;
@@ -10,14 +10,17 @@ Person peopleArray[maxSize];
 int readyCounter = 0;
 int flag = 1;
 int unServerdCounter = 0;
-int happyCounter = 0;
-int unSatisfiedCouner = 0;
+int unHappyCounter = 0;
+int satisfiedCouner = 0;
+int teller1, teller2, teller3, teller4;
 
 int pick_random_customer(float[number_of_people][2], float);
 void signaleCatcherReadyState(int);
 void terminate(int);
-void unServerdCounterFunction(int);
+void unServedFunction(int);
 int searchinArray(int, int[]);
+void satisfiedFunction(int);
+void unHappyFunction(int);
 
 void main(int argc, char *argv[])
 {
@@ -47,6 +50,21 @@ void main(int argc, char *argv[])
         exit(1);
     }
     if (sigset(2, terminate) == SIG_ERR)
+    {
+        perror("sigset");
+        exit(1);
+    }
+    if (sigset(20, unServedFunction) == SIG_ERR)
+    {
+        perror("sigset");
+        exit(1);
+    }
+    if (sigset(22, satisfiedFunction) == SIG_ERR)
+    {
+        perror("sigset");
+        exit(1);
+    }
+    if (sigset(21, unHappyFunction) == SIG_ERR)
     {
         perror("sigset");
         exit(1);
@@ -172,7 +190,7 @@ void main(int argc, char *argv[])
         perror("semget -- parent -- creation");
         exit(4);
     }
-    if((semid4 = semget((int)pid + 4, 2,
+    if ((semid4 = semget((int)pid + 4, 2,
                          IPC_CREAT | 0666)) != -1)
     {
         arg3.array = start_val3;
@@ -188,7 +206,7 @@ void main(int argc, char *argv[])
         perror("semget -- parent -- creation");
         exit(4);
     }
-    if((semid5 = semget((int)pid + 5, 2,
+    if ((semid5 = semget((int)pid + 5, 2,
                          IPC_CREAT | 0666)) != -1)
     {
         arg3.array = start_val3;
@@ -219,7 +237,7 @@ void main(int argc, char *argv[])
     tostring(str, number_of_people);
     printf("Parent pid is : %d\n", getpid());
     printf("Children : \n");
-    for (int i = 0; i < number_of_people + 3; i++)
+    for (int i = 0; i < number_of_people + 7; i++)
     {
         flag = 1;
         pid = fork();
@@ -241,6 +259,22 @@ void main(int argc, char *argv[])
             else if (i == number_of_people + 2)
             {
                 execlp("./consumer", "officer", str, (char *)NULL);
+            }
+            else if (i == number_of_people + 3)
+            {
+                execlp("./innerhall", "teller_id1", str, (char *)NULL);
+            }
+            else if (i == number_of_people + 4)
+            {
+                execlp("./innerhall", "teller_id2", str, (char *)NULL);
+            }
+            else if (i == number_of_people + 5)
+            {
+                execlp("./innerhall", "teller_id3", str, (char *)NULL);
+            }
+            else if (i == number_of_people + 6)
+            {
+                execlp("./innerhall", "teller_id4", str, (char *)NULL);
             }
 
             else if (i % 2 == 0)
@@ -264,6 +298,22 @@ void main(int argc, char *argv[])
             else if (i == number_of_people + 2)
             {
                 consumer = pid;
+            }
+            else if (i == number_of_people + 3)
+            {
+                teller1 = pid;
+            }
+            else if (i == number_of_people + 4)
+            {
+                teller2 = pid;
+            }
+            else if (i == number_of_people + 5)
+            {
+                teller3 = pid;
+            }
+            else if (i == number_of_people + 6)
+            {
+                teller4 = pid;
             }
             else
             {
@@ -308,7 +358,7 @@ void main(int argc, char *argv[])
     fflush(stdin);
     fflush(stdout);
 
-    if (readyCounter == number_of_people + 3)
+    if (readyCounter == number_of_people + 7)
     {
         for (int i = 0; i < number_of_people; i++)
         {
@@ -319,23 +369,15 @@ void main(int argc, char *argv[])
         kill(producer1, 4);
         kill(consumer, 3);
         kill(producer2, 4);
+        kill(teller1, 3);
+        kill(teller2, 3);
+        kill(teller3, 3);
+        kill(teller4, 3);
         printf("\n***** Opening Gates its 8:00 am ....  ***** \n");
         printf("***** All customers are ready to enter ***** \n");
         while (1)
         {
-
-            // int flag = rand() %2;
-            // if (flag == 1)
-            // {
             pause();
-            // }
-            // else
-            // {
-            //     kill(producer2, 3);
-            // }
-            // show(mq, 0);
-            // show(fq, 1);
-            // sleep(1);
         }
     }
 
@@ -408,7 +450,7 @@ void terminate(int sig)
 {
     semctl(semid, 0, IPC_RMID, 0);               /* remove semaphore */
     shmctl(oim, IPC_RMID, (struct shmid_ds *)0); /* remove */
-    for (int i = 0; i < number_of_people; i++)
+    for (int i = 0; i < number_of_people + 7; i++)
     {
         kill(peopleArray[i].pid, 9);
     }
@@ -431,4 +473,39 @@ void tostring(char str[], int num)
         str[len - (i + 1)] = rem + '0';
     }
     str[len] = '\0';
+}
+void unServedFunction(int signum)
+{
+    unServerdCounter++;
+    printf("********SHITTTTTTTTTTTTTTTTTTTTTT*******");
+    if (unServerdCounter > number_of_unserved_people)
+    {
+        // terminate(0);
+        write(1,"unServerdCounter = ", 19);
+    }
+    // printf("unServerdCounter = %d\n", unServerdCounter);
+    // write(1, "unServerdCounter = ", 19);
+}
+void unHappyFunction(int signum)
+{
+    unHappyCounter++;
+    if (unHappyCounter > number_of_unhappy_people)
+    {
+        // terminate(0);
+        write(1,"unServerdCounter = ", 19);
+    }
+    // printf("unHappyCounter = %d\n", unHappyCounter);
+    // write(1, "unHappyCounter = ", 16);
+}
+void satisfiedFunction(int signum)
+{
+    printf("********SHITTTTTTTTTTTTTTTTTTTTTT*******");
+    satisfiedCouner++;
+    if (satisfiedCouner > number_of_satisfied_people)
+    {
+        // terminate(0);
+        write(1,"unServerdCounter = ", 19);
+    }
+    // printf("unSatifiedCounter = %d\n", unSatifiedCounter);
+    // write(1, "unSatifiedCounter = ", 21);
 }

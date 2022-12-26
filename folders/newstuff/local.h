@@ -33,7 +33,7 @@ int number_of_tellers_T;
 int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
-int semid, semid1, semid2, semid3;
+int semid, semid1, semid2, semid3 ,semid4,semid5;
 #define maxSize 1000
 #define N_SLOTS 10
 #define INT_MIN -2147483648
@@ -122,7 +122,7 @@ void enqueue(Queue *queue, int item)
             queue->front = 0;
         queue->rear++;
         queue->array[queue->rear] = item;
-        printf("Enqueued item is %d\n", item);
+        // printf("Enqueued item is %d\n", item);
     }
 }
 int dequeue(Queue *queue)
@@ -131,7 +131,7 @@ int dequeue(Queue *queue)
     int item;
     if (queue->front == -1)
     {
-        printf("Queue is empty\n");
+        // printf("Queue is empty\n");
         return INT_MIN;
     }
     else
@@ -144,7 +144,7 @@ int dequeue(Queue *queue)
         }
     }
 
-    printf("Dequeued item is %d\n", item);
+    // printf("Dequeued item is %d\n", item);
     return item;
 }
 void show(Queue *queue)

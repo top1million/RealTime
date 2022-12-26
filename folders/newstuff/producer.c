@@ -112,10 +112,9 @@ void start(int x)
     int flag = genderFlag;
     while (j--)
     {
-        if(i == gunit-1){
+        if(i == gunit){
             break;
         }
-        printsem();
         if (flag == 0)
         {
             enqueueP(turns[i].pid, mq, semid);
