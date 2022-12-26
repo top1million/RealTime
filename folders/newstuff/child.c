@@ -85,6 +85,23 @@ void signal_catcher_1(int sig)
 {
     
 }
+void pick_top(Queue *queue, int semid)
+{
+    acquire.sem_num = TO_CONSUME;
+    if (semop(semid, &acquire, 1) == -1)
+    {
+        perror("semop -- acquire -- child");
+        exit(4);
+    }
+    int pid = dequeue(queue);
+    sleep(4);
+    release.sem_num = AVAIL_SLOTS;
+    if (semop(semid, &release, 1) == -1)
+    {
+        perror("semop -- release -- child");
+        exit(4);
+    }
+}
 
 void writeFunc(int num, int genderFlag)
 {

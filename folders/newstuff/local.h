@@ -33,9 +33,9 @@ int number_of_tellers_T;
 int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
-int semid;
+int semid, semid1;
 #define maxSize 1000
-#define N_SLOTS 30
+#define N_SLOTS 10
 #define INT_MIN -2147483648
 /* This declaration is *MISSING* is many solaris environments.
    It should be in the <sys/sem.h> file but often is not! If
@@ -59,14 +59,15 @@ typedef struct Queue
     int rear;
     int array[25];
 } Queue;
+typedef struct innerHall
+{
+    Queue queue;
+    int seats[50];
+    int tellers[4];
+} innerHall;
 
 typedef struct OIM
 {
-    int seets[50];
-    int t_b;
-    int t_r;
-    int t_i;
-    int t_t;
     Queue male_queue;
     Queue female_queue;
 } OIM;
@@ -110,11 +111,6 @@ void createQueue(Queue *queue)
 }
 void enqueue(Queue *queue, int item)
 {
-    if (semop(semid, &acquire, 1) == -1)
-    {
-        perror("semop -- producer -- acquire");
-        exit(4);
-    }
     if (queue->rear == 24)
         return;
     else

@@ -1,10 +1,11 @@
 #include "file.h"
 
-pid_t pid, officer1, officer2;
+pid_t pid, producer1, producer2, consumer;
 OIM *oim;
 Queue *mq, *fq;
 Person *people;
 Turn *turnsSHM;
+innerHall *innerHall;
 Person peopleArray[maxSize];
 int readyCounter = 0;
 int flag = 1;
@@ -21,7 +22,7 @@ int searchinArray(int, int[]);
 void main(int argc, char *argv[])
 {
     reading_file(fp);
-    int shmid, shmid1 , shmid2 ;
+    int shmid, shmid1, shmid2;
     pid = getpid();
     char str[10];
     float customersPorb[number_of_people][2];
@@ -29,7 +30,8 @@ void main(int argc, char *argv[])
     int first = 0;
     int cnt = number_of_people;
     static ushort start_val[2] = {N_SLOTS, 0};
-    union semun arg;
+    static ushort start_val1[2] = {N_SLOTS, 0};
+    union semun arg, arg1;
     int size = sizeof(Person) * number_of_people;
     int size1 = sizeof(Turn) * number_of_people;
     srand(getpid());
@@ -90,19 +92,37 @@ void main(int argc, char *argv[])
         exit(2);
     }
 
-    if ((semid = semget((int)pid, 2, IPC_CREAT | 0666)) != -1)
+    if ((semid = semget((int)pid, 2,
+                        IPC_CREAT | 0666)) != -1)
     {
         arg.array = start_val;
 
         if (semctl(semid, 0, SETALL, arg) == -1)
         {
-            perror("problem with semctl");
+            perror("semctl -- parent -- initialization");
             exit(3);
         }
     }
     else
     {
-        perror("problem with semget");
+        perror("semget -- parent -- creation");
+        exit(4);
+    }
+
+    if ((semid1 = semget((int)pid + 1, 2,
+                        IPC_CREAT | 0666)) != -1)
+    {
+        arg1.array = start_val1;
+
+        if (semctl(semid1, 0, SETALL, arg) == -1)
+        {
+            perror("semctl -- parent -- initialization");
+            exit(3);
+        }
+    }
+    else
+    {
+        perror("semget -- parent -- creation");
         exit(4);
     }
 
@@ -113,7 +133,7 @@ void main(int argc, char *argv[])
     tostring(str, number_of_people);
     printf("Parent pid is : %d\n", getpid());
     printf("Children : \n");
-    for (int i = 0; i < number_of_people + 2; i++)
+    for (int i = 0; i < number_of_people + 3; i++)
     {
         flag = 1;
         pid = fork();
@@ -126,11 +146,15 @@ void main(int argc, char *argv[])
         {
             if (i == number_of_people)
             {
-                execlp("./officer", "male", str, (char *)NULL);
+                execlp("./producer", "male", str, (char *)NULL);
             }
             else if (i == number_of_people + 1)
             {
-                execlp("./officer", "female", str, (char *)NULL);
+                execlp("./producer", "female", str, (char *)NULL);
+            }
+            else if (i == number_of_people + 2)
+            {
+                execlp("./consumer", "officer", str, (char *)NULL);
             }
 
             else if (i % 2 == 0)
@@ -145,11 +169,15 @@ void main(int argc, char *argv[])
         {
             if (i == number_of_people)
             {
-                officer1 = pid;
+                producer1 = pid;
             }
             else if (i == number_of_people + 1)
             {
-                officer2 = pid;
+                producer2 = pid;
+            }
+            else if (i == number_of_people + 2)
+            {
+                consumer = pid;
             }
             else
             {
@@ -194,7 +222,7 @@ void main(int argc, char *argv[])
     fflush(stdin);
     fflush(stdout);
 
-    if (readyCounter == number_of_people + 2)
+    if (readyCounter == number_of_people + 3)
     {
         for (int i = 0; i < number_of_people; i++)
         {
@@ -202,22 +230,22 @@ void main(int argc, char *argv[])
             people[i] = peopleArray[i];
         }
 
-        kill(officer1, 4);
-        // kill(officer2, 4);
+        kill(producer1, 4);
+        kill(consumer, 3);
+        kill(producer2, 4);
         printf("\n***** Opening Gates its 8:00 am ....  ***** \n");
         printf("***** All customers are ready to enter ***** \n");
         while (1)
         {
-            
-            pause();
+
             // int flag = rand() %2;
             // if (flag == 1)
             // {
-            //     kill(officer1, 3);
+            pause();
             // }
             // else
             // {
-            //     kill(officer2, 3);
+            //     kill(producer2, 3);
             // }
             // show(mq, 0);
             // show(fq, 1);

@@ -6,6 +6,8 @@ Queue *fq;
 pid_t ppid;
 Turn *turns;
 Person *people;
+int counter = 0;
+int genderFlag = 0;
 int gunit, semid;
 int *array;
 void pick(int);
@@ -80,8 +82,18 @@ int main(int argc, char *argv[])
         perror("semget -- producer -- access");
         exit(3);
     }
+    if (strcmp("male", argv[0]) == 0)
+    {
+        genderFlag = 0; /* set the team flag to 1 if the player is from team one */
+    }
+    else
+    {
+        genderFlag = 1; /* set the team flag to 2 if the player is from team two */
+    }
     int number_of_people = toint(argv[1]);
     gunit = number_of_people;
+    mq = &oim->male_queue;
+    fq = &oim->female_queue;
     srand(getpid());     /* seed the random number generator with the child's pid */
     kill(getppid(), 10); /* send signal 10 to parent to indicate that the child is ready */
     while (1)
@@ -136,7 +148,8 @@ void pick_top(Queue *queue, int semid)
     }
     int pid = dequeue(queue);
     int g = searchinArrayStruct(pid);
-    sleep(g);
+    sleep(people[g].timeInsideDetector);
+    people[g].status = 2;
     release.sem_num = AVAIL_SLOTS;
     if (semop(semid, &release, 1) == -1)
     {
@@ -170,7 +183,7 @@ int searchinArrayStruct(int x)
     {
         if ((int)people[i].pid == x)
         {
-            return people[i].timeInsideDetector;
+            return i;
         }
     }
     return 0;

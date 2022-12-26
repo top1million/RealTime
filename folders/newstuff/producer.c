@@ -10,7 +10,7 @@ int counter = 0;
 int genderFlag = 0;
 int gunit, semid;
 int *array;
-void signal_catcher(int);
+
 void start(int);
 int main(int argc, char *argv[])
 {
@@ -21,12 +21,6 @@ int main(int argc, char *argv[])
     { /* check if the user entered the correct number of arguments */
         printf("Invalid arguments: %d\n", argc);
         exit(-1);
-    }
-
-    if (sigset(3, signal_catcher) == -1)
-    {
-        perror("Sigset can not set SIGUSR1");
-        exit(SIGINT);
     }
     if (sigset(4, start) == -1)
     {
@@ -82,6 +76,11 @@ int main(int argc, char *argv[])
         perror("semget -- producer -- access");
         exit(3);
     }
+    if ((semid1 = semget((int)ppid + 1, 2, 0)) == -1)
+    {
+        perror("semget -- producer -- access");
+        exit(3);
+    }
     if (strcmp("male", argv[0]) == 0)
     {
         genderFlag = 0; /* set the team flag to 1 if the player is from team one */
@@ -96,6 +95,7 @@ int main(int argc, char *argv[])
     fq = &oim->female_queue;
     srand(getpid());     /* seed the random number generator with the child's pid */
     kill(getppid(), 10); /* send signal 10 to parent to indicate that the child is ready */
+    
     while (1)
     {
         pause();
@@ -104,40 +104,28 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void signal_catcher(int num)
-{
-    int flag = genderFlag;
-    // if (counter > 0)
-    // {
-    //     if (flag == 1)
-    //     {
-
-    //         pick_top();
-    //     }
-    //     else
-    //     {
-
-    //         pick_top();
-    //     }
-    //     counter--;
-    // }
-}
 void start(int x)
 {
+    int sleep_limit =  rand() % 2+ 1;
+    int j = 20 - sleep_limit;
+    int i = 0;
     int flag = genderFlag;
-    for (int i = flag; i < gunit; i = i + 2)
+    while (j--)
     {
-        writeFunc(turns[i].pid, i);
+        if(i == gunit-1){
+            break;
+        }
+        printsem();
         if (flag == 0)
         {
-            enqueueP(turns[i].pid, mq);
+            enqueueP(turns[i].pid, mq, semid);
         }
         else
         {
-            enqueueP(turns[i].pid, fq);
+            enqueueP(turns[i].pid, fq, semid1);
         }
-        printsem();
-        counter++;
+        sleep(rand()%sleep_limit + 1);
+        i++;
     }
 }
 void printsem()
@@ -156,46 +144,23 @@ void printsem()
         write(1, str, strlen(str));
     }
 }
-void pick_top()
-{
-    acquire.sem_num = TO_CONSUME;
-    if (semop(semid, &acquire, 1) == -1)
-    {
-        perror("semop -- acquire -- child");
-        exit(4);
-    }
 
-    if (genderFlag == 1)
-    {
-        dequeue(mq);
-    }
-    else
-    {
-        dequeue(fq);
-    }
-    release.sem_num = AVAIL_SLOTS;
-    if (semop(semid, &release, 1) == -1)
-    {
-        perror("semop -- release -- child");
-        exit(4);
-    }
-}
-void enqueueP(int pid, Queue *queue)
+void enqueueP(int pid, Queue *queue, int semid)
 {
     acquire.sem_num = AVAIL_SLOTS;
-    if (semop(semid, &acquire, 1) == -1)
-    {
-        perror("semop -- acquire -- child");
-        exit(4);
+    
+    if ( semop(semid, &acquire, 1) == -1 ) {
+      perror("semop -- producer -- acquire");
+      exit(4);
     }
 
     enqueue(queue, pid);
 
     release.sem_num = TO_CONSUME;
-    if (semop(semid, &release, 1) == -1)
-    {
-        perror("semop -- release -- child");
-        exit(4);
+    
+    if ( semop(semid, &release, 1) == -1 ) {
+      perror("semop -- producer -- release");
+      exit(5);
     }
 }
 // void joinMaleQueue(int pid){
