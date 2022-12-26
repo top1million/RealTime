@@ -33,7 +33,7 @@ int number_of_tellers_T;
 int number_of_unhappy_people;
 int number_of_satisfied_people;
 int gate_openning_time;
-int semid, semid1;
+int semid, semid1 , semid2;
 #define maxSize 1000
 #define N_SLOTS 10
 #define INT_MIN -2147483648

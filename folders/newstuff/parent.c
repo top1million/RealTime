@@ -5,7 +5,7 @@ OIM *oim;
 Queue *mq, *fq;
 Person *people;
 Turn *turnsSHM;
-innerHall *innerHall;
+innerHall *innerHallSHM;
 Person peopleArray[maxSize];
 int readyCounter = 0;
 int flag = 1;
@@ -22,7 +22,7 @@ int searchinArray(int, int[]);
 void main(int argc, char *argv[])
 {
     reading_file(fp);
-    int shmid, shmid1, shmid2;
+    int shmid, shmid1, shmid2, shmid3;
     pid = getpid();
     char str[10];
     float customersPorb[number_of_people][2];
@@ -31,7 +31,8 @@ void main(int argc, char *argv[])
     int cnt = number_of_people;
     static ushort start_val[2] = {N_SLOTS, 0};
     static ushort start_val1[2] = {N_SLOTS, 0};
-    union semun arg, arg1;
+    static ushort start_val2[2] = {N_SLOTS, 0};
+    union semun arg, arg1 , arg2;
     int size = sizeof(Person) * number_of_people;
     int size1 = sizeof(Turn) * number_of_people;
     srand(getpid());
@@ -91,7 +92,20 @@ void main(int argc, char *argv[])
         perror("problem with shmget");
         exit(2);
     }
+    if ((shmid3 = shmget((int)pid + 3, sizeof(innerHall), IPC_CREAT | 0666)) != -1)
+    { // size of the shared memory is the size of the struct which
 
+        if ((innerHallSHM = shmat(shmid3, 0, 0)) == (char *)-1)
+        {
+            perror("problem with shmat");
+            exit(1);
+        }
+    }
+    else
+    {
+        perror("problem with shmget");
+        exit(2);
+    }
     if ((semid = semget((int)pid, 2,
                         IPC_CREAT | 0666)) != -1)
     {
@@ -110,11 +124,11 @@ void main(int argc, char *argv[])
     }
 
     if ((semid1 = semget((int)pid + 1, 2,
-                        IPC_CREAT | 0666)) != -1)
+                         IPC_CREAT | 0666)) != -1)
     {
         arg1.array = start_val1;
 
-        if (semctl(semid1, 0, SETALL, arg) == -1)
+        if (semctl(semid1, 0, SETALL, arg1) == -1)
         {
             perror("semctl -- parent -- initialization");
             exit(3);
@@ -125,7 +139,22 @@ void main(int argc, char *argv[])
         perror("semget -- parent -- creation");
         exit(4);
     }
+    if ((semid2 = semget((int)pid + 2, 2,
+                         IPC_CREAT | 0666)) != -1)
+    {
+        arg2.array = start_val2;
 
+        if (semctl(semid2, 0, SETALL, arg2) == -1)
+        {
+            perror("semctl -- parent -- initialization");
+            exit(3);
+        }
+    }
+    else
+    {
+        perror("semget -- parent -- creation");
+        exit(4);
+    }
     mq = &oim->male_queue;
     fq = &oim->female_queue;
     createQueue(mq);
